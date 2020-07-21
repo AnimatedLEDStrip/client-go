@@ -1,0 +1,71 @@
+# AnimatedLEDStrip Client Library for Go
+
+[![Build Status](https://travis-ci.com/AnimatedLEDStrip/client-go.svg?branch=master)](https://travis-ci.com/AnimatedLEDStrip/client-go)
+[![godoc](https://godoc.org/github.com/AnimatedLEDStrip/client-go?status.svg)](http://godoc.org/github.com/AnimatedLEDStrip/client-go)
+
+This library allows a Go client to connect to an AnimatedLEDStrip server, allowing the client to send animations to the server and receive currently running animations from the server, among other information.
+
+## Creating an `AnimationSender`
+An `AnimationSender` struct contains an `ip` field (type `string`) and a `port` field (type `int`).
+
+```go
+sender := AnimationSender{}
+sender.ip = "10.0.0.254"
+sender.port = 5
+
+// or
+
+sender := AnimationSender{
+	ip:         "10.0.0.254",
+	port:       5,
+}
+```
+
+## Starting the `AnimationSender`
+An `AnimationSender` is started by calling the `Start()` method on the instance.
+
+```go
+sender.Start()
+```
+
+## Stopping the `AnimationSender`
+To stop the `AnimationSender`, call its `End()` method.
+
+```go
+sender.End()
+```
+
+## Sending Data
+An animation can be sent to the server by creating an instance of the `AnimationData` struct, then calling `SendAnimation` with the struct as the argument.
+
+```go
+cc := ColorContainer{}
+cc.AddColor(0xFF)
+cc.AddColor(0xFF00)
+
+data := AnimationData()        // Note that this is a function call 
+                               // that returns an animationData struct pointer
+data.AddColor(&cc)
+
+sender.SendAnimation(data)
+```
+
+#### `AnimationData` type notes
+The Go library uses the following values for `animation`, `continuous` and `direction`:
+- `animation`: `COLOR`, `ALTERNATE`, `RIPPLE`, etc.
+- `continuous`: `DEFAULT`, `CONTINUOUS`, `NONCONTINUOUS`
+- `direction`: `FORWARD`, `BACKWARD`
+
+## Receiving Data
+Received animations are saved to `RunningAnimations`, which is a `RunningAnimationMap` (which is a thread-safe map).
+
+To retrieve an animation, use
+```go
+sender.RunningAnimations.Load(ID)
+```
+where `ID` is the string ID of the animation.
+
+To get a list of all animation IDs, use
+```go
+ids := sender.RunningAnimations.Keys()
+```
