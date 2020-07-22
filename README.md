@@ -25,8 +25,8 @@ sender.Port = 5
 // or
 
 sender := als.AnimationSender{
-	Ip:         "10.0.0.254",
-	Port:       5,
+	Ip:   "10.0.0.254",
+	Port: 5,
 }
 ```
 
@@ -53,7 +53,7 @@ cc.AddColor(0xFF)
 cc.AddColor(0xFF00)
 
 data := als.AnimationData()        // Note that this is a function call 
-                               // that returns an animationData struct pointer
+                                   // that returns an animationData struct pointer
 data.AddColor(&cc)
 
 sender.SendAnimation(data)
