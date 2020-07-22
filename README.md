@@ -13,7 +13,7 @@ go get github.com/AnimatedLEDStrip/client-go
 ```
 
 ## Creating an `AnimationSender`
-An `AnimationSender` struct contains an `ip` field (type `string`) and a `port` field (type `int`).
+An `AnimationSender` struct contains an `Ip` field (type `string`) and a `Port` field (type `int`).
 
 ```go
 import als "github.com/AnimatedLEDStrip/client-go"
