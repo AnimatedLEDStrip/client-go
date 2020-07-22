@@ -6,7 +6,7 @@
 This library allows a Go client to connect to an AnimatedLEDStrip server, allowing the client to send animations to the server and receive currently running animations from the server, among other information.
 
 ## Using the Library in a Project
-The library can be downloading with:
+The library can be downloaded with:
 
 ```bash
 go get github.com/AnimatedLEDStrip/client-go
