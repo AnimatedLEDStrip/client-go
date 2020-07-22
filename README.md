@@ -16,13 +16,15 @@ go get github.com/AnimatedLEDStrip/client-go
 An `AnimationSender` struct contains an `ip` field (type `string`) and a `port` field (type `int`).
 
 ```go
-sender := AnimationSender{}
+import als "github.com/AnimatedLEDStrip/client-go"
+
+sender := als.AnimationSender{}
 sender.Ip = "10.0.0.254"
 sender.Port = 5
 
 // or
 
-sender := AnimationSender{
+sender := als.AnimationSender{
 	Ip:         "10.0.0.254",
 	Port:       5,
 }
@@ -46,11 +48,11 @@ sender.End()
 An animation can be sent to the server by creating an instance of the `AnimationData` struct, then calling `SendAnimation` with the struct as the argument.
 
 ```go
-cc := ColorContainer{}
+cc := als.ColorContainer{}
 cc.AddColor(0xFF)
 cc.AddColor(0xFF00)
 
-data := AnimationData()        // Note that this is a function call 
+data := als.AnimationData()        // Note that this is a function call 
                                // that returns an animationData struct pointer
 data.AddColor(&cc)
 
