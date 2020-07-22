@@ -58,8 +58,7 @@ sender.SendAnimation(data)
 ```
 
 #### `AnimationData` type notes
-The Go library uses the following values for `animation`, `continuous` and `direction`:
-- `animation`: `COLOR`, `ALTERNATE`, `RIPPLE`, etc.
+The Go library uses the following values for `continuous` and `direction`:
 - `continuous`: `DEFAULT`, `CONTINUOUS`, `NONCONTINUOUS`
 - `direction`: `FORWARD`, `BACKWARD`
 
