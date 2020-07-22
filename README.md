@@ -17,14 +17,14 @@ An `AnimationSender` struct contains an `ip` field (type `string`) and a `port` 
 
 ```go
 sender := AnimationSender{}
-sender.ip = "10.0.0.254"
-sender.port = 5
+sender.Ip = "10.0.0.254"
+sender.Port = 5
 
 // or
 
 sender := AnimationSender{
-	ip:         "10.0.0.254",
-	port:       5,
+	Ip:         "10.0.0.254",
+	Port:       5,
 }
 ```
 
