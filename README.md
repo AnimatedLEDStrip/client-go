@@ -5,19 +5,28 @@
 
 This library allows a Go client to connect to an AnimatedLEDStrip server, allowing the client to send animations to the server and receive currently running animations from the server, among other information.
 
+## Using the Library in a Project
+The library can be downloaded with:
+
+```bash
+go get github.com/AnimatedLEDStrip/client-go
+```
+
 ## Creating an `AnimationSender`
-An `AnimationSender` struct contains an `ip` field (type `string`) and a `port` field (type `int`).
+An `AnimationSender` struct contains an `Ip` field (type `string`) and a `Port` field (type `int`).
 
 ```go
-sender := AnimationSender{}
-sender.ip = "10.0.0.254"
-sender.port = 5
+import als "github.com/AnimatedLEDStrip/client-go"
+
+sender := als.AnimationSender{}
+sender.Ip = "10.0.0.254"
+sender.Port = 5
 
 // or
 
-sender := AnimationSender{
-	ip:         "10.0.0.254",
-	port:       5,
+sender := als.AnimationSender{
+	Ip:   "10.0.0.254",
+	Port: 5,
 }
 ```
 
@@ -39,20 +48,19 @@ sender.End()
 An animation can be sent to the server by creating an instance of the `AnimationData` struct, then calling `SendAnimation` with the struct as the argument.
 
 ```go
-cc := ColorContainer{}
+cc := als.ColorContainer{}
 cc.AddColor(0xFF)
 cc.AddColor(0xFF00)
 
-data := AnimationData()        // Note that this is a function call 
-                               // that returns an animationData struct pointer
+data := als.AnimationData()        // Note that this is a function call 
+                                   // that returns an animationData struct pointer
 data.AddColor(&cc)
 
 sender.SendAnimation(data)
 ```
 
 #### `AnimationData` type notes
-The Go library uses the following values for `animation`, `continuous` and `direction`:
-- `animation`: `COLOR`, `ALTERNATE`, `RIPPLE`, etc.
+The Go library uses the following values for `continuous` and `direction`:
 - `continuous`: `DEFAULT`, `CONTINUOUS`, `NONCONTINUOUS`
 - `direction`: `FORWARD`, `BACKWARD`
 
