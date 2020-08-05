@@ -35,6 +35,7 @@ type AnimationSender struct {
 	RunningAnimations   *RunningAnimationMap
 	Info                *stripInfo
 	SupportedAnimations []*animationInfo
+	Sections            []*section
 }
 
 func (s *AnimationSender) addAnimation(data *animationData) {
@@ -48,7 +49,7 @@ func (s *AnimationSender) removeAnimation(data *animationData) {
 func (s *AnimationSender) connect() {
 	conn, err := net.Dial("tcp", s.Ip+":"+strconv.Itoa(s.Port))
 	if err != nil {
-		print("Error connecting")
+		println("Error connecting")
 	} else {
 		s.connection = &conn
 	}
@@ -76,7 +77,8 @@ func (s *AnimationSender) receiverLoop() {
 					anim := EndAnimationFromJson(token)
 					s.RunningAnimations.Delete(anim.Id)
 				} else if strings.HasPrefix(token, "SECT:") {
-					// TODO
+					sect := SectionFromJson(token)
+					s.Sections = append(s.Sections, sect)
 				} else if strings.HasPrefix(token, "SINF") {
 					info := StripInfoFromJson(token)
 					s.Info = info
@@ -89,6 +91,7 @@ func (s *AnimationSender) receiverLoop() {
 func (s *AnimationSender) Start() {
 	s.RunningAnimations = NewRunningAnimationMap()
 	s.SupportedAnimations = []*animationInfo{}
+	s.Sections = []*section{}
 	s.connect()
 	go s.receiverLoop()
 }
@@ -97,13 +100,26 @@ func (s *AnimationSender) End() {
 	_ = (*s.connection).Close()
 	s.RunningAnimations = nil
 	s.SupportedAnimations = nil
+	s.Sections = nil
 }
 
-func (s *AnimationSender) SendAnimation(data *animationData) {
+func (s *AnimationSender) SendAnimationData(data *animationData) {
 	_, err := (*s.connection).Write([]byte(data.Json()))
 	if err != nil {
 		println("error sending")
-	} else {
-		println("sent")
+	}
+}
+
+func (s *AnimationSender) SendEndAnimation(endAnim *endAnimation) {
+	_, err := (*s.connection).Write([]byte(endAnim.Json()))
+	if err != nil {
+		println("error sending")
+	}
+}
+
+func (s *AnimationSender) SendSection(sect *section) {
+	_, err := (*s.connection).Write([]byte(sect.Json()))
+	if err != nil {
+		println("error sending")
 	}
 }
