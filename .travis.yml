@@ -5,7 +5,6 @@ branches:
   only:
     - master
     - /^travis.*/
-    - /^v.*/
 
 stages:
   - name: test
