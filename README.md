@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.com/AnimatedLEDStrip/client-go.svg?branch=master)](https://travis-ci.com/AnimatedLEDStrip/client-go)
 [![godoc](https://godoc.org/github.com/AnimatedLEDStrip/client-go?status.svg)](http://godoc.org/github.com/AnimatedLEDStrip/client-go)
+[![codecov](https://codecov.io/gh/AnimatedLEDStrip/client-go/branch/master/graph/badge.svg)](https://codecov.io/gh/AnimatedLEDStrip/client-go)
 
 This library allows a Go client to connect to an AnimatedLEDStrip server, allowing the client to send animations to the server and receive currently running animations from the server, among other information.
 
