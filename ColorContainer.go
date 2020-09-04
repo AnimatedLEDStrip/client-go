@@ -22,39 +22,11 @@
 
 package animatedledstrip
 
-import (
-	"strconv"
-	"strings"
-)
-
 type ColorContainer struct {
-	Colors []int
+	Colors []int `json:"colors"`
 }
 
 func (c *ColorContainer) AddColor(color int) *ColorContainer {
 	c.Colors = append(c.Colors, color)
 	return c
-}
-
-func (c ColorContainer) Json() string {
-	var stringParts []string
-	stringParts = append(stringParts, `{"colors":[`)
-	if len(c.Colors) != 0 {
-		for _, c := range c.Colors {
-			stringParts = append(stringParts, strconv.Itoa(c))
-			stringParts = append(stringParts, ",")
-		}
-		stringParts = stringParts[:len(stringParts)-1]
-	}
-	stringParts = append(stringParts, "]}")
-	return strings.Join(stringParts, "")
-}
-
-func ColorContainerFromJson(ccJson interface{}) *ColorContainer {
-	cc := ColorContainer{}
-	colors, _ := ccJson.(map[string]interface{})["colors"].([]interface{})
-	for _, c := range colors {
-		cc.AddColor(int(c.(float64)))
-	}
-	return &cc
 }

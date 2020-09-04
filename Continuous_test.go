@@ -22,26 +22,33 @@
 
 package animatedledstrip
 
-import "testing"
+import (
+	"log"
+	"testing"
+)
 
 func TestContinuous_String(t *testing.T) {
 	c := DEFAULT
 	if c.String() != "null" {
+		log.Print(`Failed DEFAULT -> "null"`)
 		t.Fail()
 	}
 
 	c = CONTINUOUS
 	if c.String() != "true" {
+		log.Print(`Failed CONTINUOUS -> "true"`)
 		t.Fail()
 	}
 
 	c = NONCONTINUOUS
 	if c.String() != "false" {
+		log.Print(`Failed NONCONTINUOUS -> "false"`)
 		t.Fail()
 	}
 
 	c = -1
 	if c.String() != "null" {
+		log.Print(`Failed -1 -> "null"`)
 		t.Fail()
 	}
 }

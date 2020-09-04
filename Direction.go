@@ -22,6 +22,9 @@
 
 package animatedledstrip
 
+//go:generate jsonenums.exe -type=Direction
+//go:generate ffjson.exe $GOFILE
+
 type Direction int
 
 const (
@@ -29,14 +32,18 @@ const (
 	BACKWARD
 )
 
+func (d Direction) MarshalJSON() ([]byte, error) {
+	return []byte(d.String()), nil
+}
+
 func (d Direction) String() string {
 	switch d {
 	case FORWARD:
-		return "FORWARD"
+		return `"FORWARD"`
 	case BACKWARD:
-		return "BACKWARD"
+		return `"BACKWARD"`
 	default:
-		return "FORWARD"
+		return `"FORWARD"`
 	}
 }
 

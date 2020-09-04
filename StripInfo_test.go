@@ -22,23 +22,10 @@
 
 package animatedledstrip
 
-import "testing"
-
-func TestStripInfo(t *testing.T) {
-	info := StripInfo()
-
-	if info.NumLEDs != 0 {
-		t.Fail()
-	} else if info.Pin != -1 {
-		t.Fail()
-	} else if info.ImageDebugging != false {
-		t.Fail()
-	} else if info.RendersBeforeSave != -1 {
-		t.Fail()
-	} else if info.ThreadCount != 100 {
-		t.Fail()
-	}
-}
+import (
+	"log"
+	"testing"
+)
 
 func TestStripInfoFromJson(t *testing.T) {
 	jsonStr := `SINF:{"numLEDs":240,"pin":12,"imageDebugging":false,"rendersBeforeSave":1000,"threadCount":100}`
@@ -46,14 +33,19 @@ func TestStripInfoFromJson(t *testing.T) {
 	info := StripInfoFromJson(jsonStr)
 
 	if info.NumLEDs != 240 {
+		log.Print("Failed info.NumLEDs check")
 		t.Fail()
 	} else if info.Pin != 12 {
+		log.Print("Failed info.Pin check")
 		t.Fail()
 	} else if info.ImageDebugging != false {
+		log.Print("Failed info.ImageDebugging check")
 		t.Fail()
 	} else if info.RendersBeforeSave != 1000 {
+		log.Print("Failed info.RendersBeforeSave check")
 		t.Fail()
 	} else if info.ThreadCount != 100 {
+		log.Print("Failed info.ThreadCount check")
 		t.Fail()
 	}
 }

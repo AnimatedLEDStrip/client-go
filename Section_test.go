@@ -22,20 +22,28 @@
 
 package animatedledstrip
 
-import "testing"
+import (
+	"log"
+	"testing"
+)
 
 func TestSection(t *testing.T) {
 	sect := Section()
 
 	if sect.Name != "" {
+		log.Print("Failed sect.Name check")
 		t.Fail()
 	} else if sect.StartPixel != -1 {
+		log.Print("Failed sect.StartPixel check")
 		t.Fail()
 	} else if sect.EndPixel != -1 {
+		log.Print("Failed sect.EndPixel check")
 		t.Fail()
 	} else if sect.PhysicalStart != -1 {
+		log.Print("Failed sect.PhysicalStart check")
 		t.Fail()
 	} else if sect.NumLEDs != 0 {
+		log.Print("Failed sect.NumLEDs check")
 		t.Fail()
 	}
 }
@@ -67,24 +75,6 @@ func TestSection_SetEndPixel(t *testing.T) {
 	}
 }
 
-func TestSection_SetPhysicalStart(t *testing.T) {
-	sect := Section()
-	sect.SetPhysicalStart(30)
-
-	if sect.PhysicalStart != 30 {
-		t.Fail()
-	}
-}
-
-func TestSection_SetNumLEDs(t *testing.T) {
-	sect := Section()
-	sect.SetNumLEDs(15)
-
-	if sect.NumLEDs != 15 {
-		t.Fail()
-	}
-}
-
 func TestSection_Json(t *testing.T) {
 	sect := Section()
 	sect.SetName("Section")
@@ -92,47 +82,53 @@ func TestSection_Json(t *testing.T) {
 	sect.SetEndPixel(40)
 
 	json := sect.Json()
-	if json != `SECT:{"name":"Section","startPixel":30,"endPixel":40}` {
+	if string(json) != `SECT:{"name":"Section","startPixel":30,"endPixel":40}` {
 		t.Fail()
 	}
 }
 
 func TestSection_FromGoodJson(t *testing.T) {
-	// Good JSON test
-
 	jsonStr := `SECT:{"physicalStart":0,"numLEDs":240,"name":"section","startPixel":0,"endPixel":239}`
 
 	sect := SectionFromJson(jsonStr)
 
 	if sect.Name != "section" {
+		log.Print("Failed sect.Name check")
 		t.Fail()
 	} else if sect.StartPixel != 0 {
+		log.Print("Failed sect.StartPixel check")
 		t.Fail()
 	} else if sect.EndPixel != 239 {
+		log.Print("Failed sect.EndPixel check")
 		t.Fail()
 	} else if sect.PhysicalStart != 0 {
+		log.Print("Failed sect.PhysicalStart check")
 		t.Fail()
 	} else if sect.NumLEDs != 240 {
+		log.Print("Failed sect.NumLEDs check")
 		t.Fail()
 	}
 }
 
 func TestSection_FromBadJson(t *testing.T) {
-	// Bad JSON test
-
 	jsonStr := "{}"
 
 	sect := SectionFromJson(jsonStr)
 
 	if sect.Name != "" {
+		log.Print("Failed sect.Name check")
 		t.Fail()
 	} else if sect.StartPixel != -1 {
+		log.Print("Failed sect.StartPixel check")
 		t.Fail()
 	} else if sect.EndPixel != -1 {
+		log.Print("Failed sect.EndPixel check")
 		t.Fail()
 	} else if sect.PhysicalStart != -1 {
+		log.Print("Failed sect.PhysicalStart check")
 		t.Fail()
 	} else if sect.NumLEDs != 0 {
+		log.Print("Failed sect.NumLEDs check")
 		t.Fail()
 	}
 }

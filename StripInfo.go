@@ -24,69 +24,30 @@ package animatedledstrip
 
 import (
 	"encoding/json"
+	"log"
 	"strings"
 )
 
 type stripInfo struct {
-	NumLEDs           int
-	Pin               int
-	ImageDebugging    bool
-	RendersBeforeSave int
-	ThreadCount       int
+	NumLEDs           int  `json:"numLEDs"`
+	Pin               int  `json:"pin"`
+	ImageDebugging    bool `json:"imageDebugging"`
+	RendersBeforeSave int  `json:"rendersBeforeSave"`
+	ThreadCount       int  `json:"threadCount"`
 }
 
-func StripInfo() *stripInfo {
-	return &stripInfo{
+func StripInfoFromJson(data string) *stripInfo {
+	dataStr := strings.TrimPrefix(data, "SINF:")
+	info := stripInfo{
 		NumLEDs:           0,
 		Pin:               -1,
 		ImageDebugging:    false,
 		RendersBeforeSave: -1,
 		ThreadCount:       100,
 	}
-}
-
-func StripInfoFromJson(data string) *stripInfo {
-	info := StripInfo()
-
-	dataStr := strings.TrimPrefix(data, "SINF:")
-	var infoJson interface{}
-	_ = json.Unmarshal([]byte(dataStr), &infoJson)
-	i := infoJson.(map[string]interface{})
-
-	num, ok := i["numLEDs"].(float64)
-	if !ok {
-		num = 0
+	err := json.Unmarshal([]byte(dataStr), &info)
+	if err != nil {
+		log.Fatal(err.Error())
 	}
-
-	info.NumLEDs = int(num)
-
-	pin, ok := i["pin"].(float64)
-	if !ok {
-		pin = -1
-	}
-
-	info.Pin = int(pin)
-
-	imgDebug, ok := i["imageDebugging"].(bool)
-	if !ok {
-		imgDebug = false
-	}
-
-	info.ImageDebugging = imgDebug
-
-	renders, ok := i["rendersBeforeSave"].(float64)
-	if !ok {
-		renders = -1
-	}
-
-	info.RendersBeforeSave = int(renders)
-
-	threads, ok := i["threadCount"].(float64)
-	if !ok {
-		threads = 100
-	}
-
-	info.ThreadCount = int(threads)
-
-	return info
+	return &info
 }

@@ -22,21 +22,27 @@
 
 package animatedledstrip
 
-import "testing"
+import (
+	"log"
+	"testing"
+)
 
 func TestParamUsage_String(t *testing.T) {
-	u := NOTUSED
-	if u.String() != "NOTUSED" {
+	u := USED
+	if u.String() != `"USED"` {
+		log.Print("Failed USED -> `\"USED\"`")
 		t.Fail()
 	}
 
-	u = USED
-	if u.String() != "USED" {
+	u = NOTUSED
+	if u.String() != `"NOTUSED"` {
+		log.Print("Failed NOTUSED -> `\"NOTUSED\"`")
 		t.Fail()
 	}
 
 	u = -1
-	if u.String() != "NOTUSED" {
+	if u.String() != `"NOTUSED"` {
+		log.Print("Failed -1 -> `\"NOTUSED\"`")
 		t.Fail()
 	}
 }
@@ -44,16 +50,19 @@ func TestParamUsage_String(t *testing.T) {
 func TestParamUsageFromString(t *testing.T) {
 	s := "USED"
 	if ParamUsageFromString(s) != USED {
+		log.Print(`Failed "USED" -> USED`)
 		t.Fail()
 	}
 
 	s = "NOTUSED"
 	if ParamUsageFromString(s) != NOTUSED {
+		log.Print(`Failed "NOTUSED" -> NOTUSED`)
 		t.Fail()
 	}
 
 	s = "SSS"
 	if ParamUsageFromString(s) != NOTUSED {
+		log.Print(`Failed "SSS" -> NOTUSED`)
 		t.Fail()
 	}
 }

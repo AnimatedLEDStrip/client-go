@@ -24,46 +24,37 @@ package animatedledstrip
 
 import (
 	"encoding/json"
+	"log"
 	"strings"
 )
 
 type endAnimation struct {
-	Id string
+	Id string `json:"id"`
 }
 
 func EndAnimation() *endAnimation {
 	return &endAnimation{Id: ""}
 }
 
-func (e *endAnimation) SetId(id string) *endAnimation {
-	e.Id = id
-	return e
-}
-
-func (e endAnimation) Json() string {
-	var stringParts []string
-	stringParts = append(stringParts, "END :{")
-	stringParts = append(stringParts, `"id":"`)
-	stringParts = append(stringParts, e.Id)
-	stringParts = append(stringParts, `"}`)
-
-	return strings.Join(stringParts, "")
+func (e endAnimation) Json() []byte {
+	str, err := json.Marshal(e)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	return append([]byte("END :"), str...)
 }
 
 func EndAnimationFromJson(data string) *endAnimation {
-	endAnim := EndAnimation()
-
 	dataStr := strings.TrimPrefix(data, "END :")
-	var animJson interface{}
-	_ = json.Unmarshal([]byte(dataStr), &animJson)
-	d := animJson.(map[string]interface{})
-
-	id, ok := d["id"].(string)
-	if !ok {
-		id = ""
+	anim := EndAnimation()
+	err := json.Unmarshal([]byte(dataStr), &anim)
+	if err != nil {
+		log.Fatal(err.Error())
 	}
+	return anim
+}
 
-	endAnim.Id = id
-
-	return endAnim
+func (e *endAnimation) SetId(id string) *endAnimation {
+	e.Id = id
+	return e
 }

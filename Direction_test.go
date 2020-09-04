@@ -22,21 +22,27 @@
 
 package animatedledstrip
 
-import "testing"
+import (
+	"log"
+	"testing"
+)
 
 func TestDirection_String(t *testing.T) {
 	d := FORWARD
-	if d.String() != "FORWARD" {
+	if d.String() != `"FORWARD"` {
+		log.Print("Failed FORWARD -> `\"FORWARD\"`")
 		t.Fail()
 	}
 
 	d = BACKWARD
-	if d.String() != "BACKWARD" {
+	if d.String() != `"BACKWARD"` {
+		log.Print("Failed BACKWARD -> `\"BACKWARD\"`")
 		t.Fail()
 	}
 
 	d = -1
-	if d.String() != "FORWARD" {
+	if d.String() != `"FORWARD"` {
+		log.Print("Failed -1 -> `\"FORWARD\"`")
 		t.Fail()
 	}
 }
@@ -44,16 +50,19 @@ func TestDirection_String(t *testing.T) {
 func TestDirection_DirectionFromString(t *testing.T) {
 	d := "FORWARD"
 	if DirectionFromString(d) != FORWARD {
+		log.Print(`Failed "FORWARD" -> FORWARD`)
 		t.Fail()
 	}
 
 	d = "BACKWARD"
 	if DirectionFromString(d) != BACKWARD {
+		log.Print(`Failed "BACKWARD" -> BACKWARD`)
 		t.Fail()
 	}
 
 	d = "NONDIRECTION"
 	if DirectionFromString(d) != FORWARD {
+		log.Print(`Failed "NONDIRECTION" -> FORWARD`)
 		t.Fail()
 	}
 }

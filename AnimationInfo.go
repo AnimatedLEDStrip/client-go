@@ -24,29 +24,31 @@ package animatedledstrip
 
 import (
 	"encoding/json"
+	"log"
 	"strings"
 )
 
 type animationInfo struct {
-	Name            string
-	Abbr            string
-	Description     string
-	SignatureFile   string
-	Repetitive      bool
-	MinimumColors   int
-	UnlimitedColors bool
-	Center          ParamUsage
-	Delay           ParamUsage
-	Direction       ParamUsage
-	Distance        ParamUsage
-	Spacing         ParamUsage
-	DelayDefault    int
-	DistanceDefault int
-	SpacingDefault  int
+	Name            string     `json:"name"`
+	Abbr            string     `json:"abbr"`
+	Description     string     `json:"description"`
+	SignatureFile   string     `json:"signatureFile"`
+	Repetitive      bool       `json:"repetitive"`
+	MinimumColors   int        `json:"minimumColors"`
+	UnlimitedColors bool       `json:"unlimitedColors"`
+	Center          ParamUsage `json:"center"`
+	Delay           ParamUsage `json:"delay"`
+	Direction       ParamUsage `json:"direction"`
+	Distance        ParamUsage `json:"distance"`
+	Spacing         ParamUsage `json:"spacing"`
+	DelayDefault    int        `json:"delayDefault"`
+	DistanceDefault int        `json:"distanceDefault"`
+	SpacingDefault  int        `json:"spacingDefault"`
 }
 
-func AnimationInfo() *animationInfo {
-	return &animationInfo{
+func AnimationInfoFromJson(data string) *animationInfo {
+	dataStr := strings.TrimPrefix(data, "AINF:")
+	animInfo := animationInfo{
 		Name:            "",
 		Abbr:            "",
 		Description:     "",
@@ -63,98 +65,35 @@ func AnimationInfo() *animationInfo {
 		DistanceDefault: -1,
 		SpacingDefault:  -1,
 	}
-}
 
-func AnimationInfoFromJson(data string) *animationInfo {
-	info := AnimationInfo()
-
-	dataStr := strings.TrimPrefix(data, "AINF:")
-	var infoJson interface{}
-	_ = json.Unmarshal([]byte(dataStr), &infoJson)
-	i := infoJson.(map[string]interface{})
-
-	name, _ := i["name"].(string)
-	info.Name = name
-	// No need to specify a default here because
-	// default for name is an empty string
-
-	abbr, _ := i["abbr"].(string)
-	info.Abbr = abbr
-	// No need to specify a default here because
-	// default for abbr is an empty string
-
-	desc, _ := i["description"].(string)
-	info.Description = desc
-	// No need to specify a default here because
-	// default for description is an empty string
-
-	sig, _ := i["signatureFile"].(string)
-	info.SignatureFile = sig
-	// No need to specify a default here because
-	// default for signatureFile is an empty string
-
-	rep, ok := i["repetitive"].(bool)
-	if !ok {
-		rep = false
+	err := json.Unmarshal([]byte(dataStr), &animInfo)
+	if err != nil &&
+		!(strings.Contains(err.Error(), "cannot unmarshal string") &&
+			strings.Contains(err.Error(), "type animatedledstrip.ParamUsage")) {
+		log.Fatal(err.Error())
 	}
-	info.Repetitive = rep
 
-	min, ok := i["minimumColors"].(float64)
-	if !ok {
-		min = -1
+	var getUsages interface{}
+	err = json.Unmarshal([]byte(dataStr), &getUsages)
+	if err != nil {
+		log.Fatal(err.Error())
 	}
-	info.MinimumColors = int(min)
+	usg := getUsages.(map[string]interface{})
 
-	unlimited, _ := i["unlimitedColors"].(bool)
-	info.UnlimitedColors = unlimited
+	// No need to specify a default for
+	// center, delay, direction, distance or spacing
+	// because ParamUsageFromString returns NOTUSED
+	// for an empty string
+	center, _ := usg["center"].(string)
+	animInfo.Center = ParamUsageFromString(center)
+	delay, _ := usg["delay"].(string)
+	animInfo.Delay = ParamUsageFromString(delay)
+	direction := usg["direction"].(string)
+	animInfo.Direction = ParamUsageFromString(direction)
+	distance := usg["distance"].(string)
+	animInfo.Distance = ParamUsageFromString(distance)
+	spacing := usg["spacing"].(string)
+	animInfo.Spacing = ParamUsageFromString(spacing)
 
-	center, _ := i["center"].(string)
-	info.Center = ParamUsageFromString(center)
-	// No need to specify a default here because
-	// ParamUsageFromString returns NOTUSED for an
-	// empty string
-
-	delay, _ := i["delay"].(string)
-	info.Delay = ParamUsageFromString(delay)
-	// No need to specify a default here because
-	// ParamUsageFromString returns NOTUSED for an
-	// empty string
-
-	direction := i["direction"].(string)
-	info.Direction = ParamUsageFromString(direction)
-	// No need to specify a default here because
-	// ParamUsageFromString returns NOTUSED for an
-	// empty string
-
-	distance := i["distance"].(string)
-	info.Distance = ParamUsageFromString(distance)
-	// No need to specify a default here because
-	// ParamUsageFromString returns NOTUSED for an
-	// empty string
-
-	spacing := i["spacing"].(string)
-	info.Spacing = ParamUsageFromString(spacing)
-	// No need to specify a default here because
-	// ParamUsageFromString returns NOTUSED for an
-	// empty string
-
-	delayDefault, ok := i["delayDefault"].(float64)
-	if !ok {
-		delayDefault = -1
-	}
-	info.DelayDefault = int(delayDefault)
-
-	distanceDefault, ok := i["distanceDefault"].(float64)
-	if !ok {
-		distanceDefault = -1
-	}
-	info.DistanceDefault = int(distanceDefault)
-
-	spacingDefault, ok := i["spacingDefault"].(float64)
-	if !ok {
-		spacingDefault = -1
-	}
-	info.SpacingDefault = int(spacingDefault)
-
-	return info
+	return &animInfo
 }

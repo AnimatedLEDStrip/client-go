@@ -30,6 +30,10 @@ const (
 	NONCONTINUOUS
 )
 
+func (c Continuous) MarshalJSON() ([]byte, error) {
+	return []byte(c.String()), nil
+}
+
 func (c Continuous) String() string {
 	switch c {
 	case DEFAULT:

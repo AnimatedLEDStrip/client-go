@@ -24,16 +24,28 @@ package animatedledstrip
 
 import (
 	"encoding/json"
-	"strconv"
+	"log"
 	"strings"
 )
 
 type section struct {
-	Name          string
-	StartPixel    int
-	EndPixel      int
-	PhysicalStart int
-	NumLEDs       int
+	Name          string `json:"name"`
+	StartPixel    int    `json:"startPixel"`
+	EndPixel      int    `json:"endPixel"`
+	PhysicalStart int    `json:"physicalStart"`
+	NumLEDs       int    `json:"numLEDs"`
+}
+
+func (s *section) MarshalJSON() ([]byte, error) {
+	var tmp struct {
+		Name       string `json:"name"`
+		StartPixel int    `json:"startPixel"`
+		EndPixel   int    `json:"endPixel"`
+	}
+	tmp.Name = s.Name
+	tmp.StartPixel = s.StartPixel
+	tmp.EndPixel = s.EndPixel
+	return json.Marshal(&tmp)
 }
 
 func Section() *section {
@@ -46,6 +58,24 @@ func Section() *section {
 	}
 }
 
+func (s *section) Json() []byte {
+	str, err := json.Marshal(s)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	return append([]byte("SECT:"), str...)
+}
+
+func SectionFromJson(data string) *section {
+	dataStr := strings.TrimPrefix(data, "SECT:")
+	sect := Section()
+	err := json.Unmarshal([]byte(dataStr), sect)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	return sect
+}
+
 func (s *section) SetName(name string) *section {
 	s.Name = name
 	return s
@@ -53,74 +83,12 @@ func (s *section) SetName(name string) *section {
 
 func (s *section) SetStartPixel(pixel int) *section {
 	s.StartPixel = pixel
+	s.NumLEDs = s.EndPixel - s.StartPixel
 	return s
 }
 
 func (s *section) SetEndPixel(pixel int) *section {
 	s.EndPixel = pixel
+	s.NumLEDs = s.EndPixel - s.StartPixel
 	return s
-}
-
-func (s *section) SetPhysicalStart(pixel int) *section {
-	s.PhysicalStart = pixel
-	return s
-}
-
-func (s *section) SetNumLEDs(leds int) *section {
-	s.NumLEDs = leds
-	return s
-}
-
-func (s *section) Json() string {
-	var stringParts []string
-	stringParts = append(stringParts, "SECT:{")
-	stringParts = append(stringParts, `"name":"`)
-	stringParts = append(stringParts, s.Name)
-	stringParts = append(stringParts, `","startPixel":`)
-	stringParts = append(stringParts, strconv.Itoa(s.StartPixel))
-	stringParts = append(stringParts, `,"endPixel":`)
-	stringParts = append(stringParts, strconv.Itoa(s.EndPixel))
-	stringParts = append(stringParts, "}")
-
-	return strings.Join(stringParts, "")
-}
-
-func SectionFromJson(data string) *section {
-	sect := Section()
-
-	dataStr := strings.TrimPrefix(data, "SECT:")
-	var sectJson interface{}
-	_ = json.Unmarshal([]byte(dataStr), &sectJson)
-	s := sectJson.(map[string]interface{})
-
-	name, _ := s["name"].(string)
-	sect.Name = name
-	// No need to specify a default here because
-	// default for name is an empty string
-
-	start, ok := s["startPixel"].(float64)
-	if !ok {
-		start = -1
-	}
-	sect.StartPixel = int(start)
-
-	end, ok := s["endPixel"].(float64)
-	if !ok {
-		end = -1
-	}
-	sect.EndPixel = int(end)
-
-	pStart, ok := s["physicalStart"].(float64)
-	if !ok {
-		pStart = -1
-	}
-	sect.PhysicalStart = int(pStart)
-
-	num, ok := s["numLEDs"].(float64)
-	if !ok {
-		num = 0
-	}
-	sect.NumLEDs = int(num)
-
-	return sect
 }

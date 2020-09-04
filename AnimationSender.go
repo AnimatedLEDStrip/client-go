@@ -29,97 +29,184 @@ import (
 )
 
 type AnimationSender struct {
-	Ip                  string
-	Port                int
-	connection          *net.Conn
+	Address    string
+	Port       int
+	connection *net.Conn
+
+	Started   bool
+	Connected bool
+
 	RunningAnimations   *RunningAnimationMap
-	Info                *stripInfo
-	SupportedAnimations []*animationInfo
-	Sections            []*section
+	Sections            map[string]*section
+	SupportedAnimations map[string]*animationInfo
+	StripInfo           *stripInfo
+
+	onConnectCallback         func(string, int)
+	onDisconnectCallback      func(string, int)
+	onUnableToConnectCallback func(string, int)
+
+	onReceiveCallback          func(string)
+	onNewAnimationDataCallback func(*animationData)
+	onNewAnimationInfoCallback func(*animationInfo)
+	onNewEndAnimationCallback  func(*endAnimation)
+	onNewMessageCallback       func(*message)
+	onNewSectionCallback       func(*section)
+	onNewStripInfoCallback     func(*stripInfo)
+
+	partialData string
 }
 
-func (s *AnimationSender) addAnimation(data *animationData) {
-	s.RunningAnimations.Store(data.Id, data)
-}
+func (s *AnimationSender) Start() {
+	if s.Started {
+		return
+	}
 
-func (s *AnimationSender) removeAnimation(data *animationData) {
-	s.RunningAnimations.Delete(data.Id)
-}
+	s.RunningAnimations = NewRunningAnimationMap()
+	s.Sections = map[string]*section{}
+	s.SupportedAnimations = map[string]*animationInfo{}
+	s.StripInfo = nil
 
-func (s *AnimationSender) connect() {
-	conn, err := net.Dial("tcp", s.Ip+":"+strconv.Itoa(s.Port))
+	s.Started = true
+
+	conn, err := net.Dial("tcp", s.Address+":"+strconv.Itoa(s.Port))
 	if err != nil {
-		println("Error connecting")
+		s.onUnableToConnectCallback(s.Address, s.Port)
+		s.Started = false
+		s.Connected = false
 	} else {
 		s.connection = &conn
+
+		s.Connected = true
+		s.onConnectCallback(s.Address, s.Port)
+
+		go s.receiverLoop()
 	}
 }
 
+func (s *AnimationSender) End() {
+	if !s.Connected {
+		return
+	}
+	s.Started = false
+	s.Connected = false
+	_ = (*s.connection).Close()
+}
+
 func (s *AnimationSender) receiverLoop() {
-	for {
+	for s.Connected {
 		buff := make([]byte, 16384)
 		length, err := (*s.connection).Read(buff)
 		if err != nil {
+			s.Started = false
+			s.Connected = false
 			_ = (*s.connection).Close()
+			s.onDisconnectCallback(s.Address, s.Port)
 			return
 		}
+
 		if length > 0 {
-			tokens := strings.Split(string(buff), ";")
+			input := string(buff)
+			tokens := strings.Split(s.partialData+input, ";;;")
+			s.partialData = ""
+			if !strings.HasSuffix(input, ";;;") {
+				s.partialData = tokens[len(tokens)-1]
+				tokens = tokens[:len(tokens)-1]
+			}
 			for i := 0; i < len(tokens); i++ {
 				token := tokens[i]
+				if len(token) == 0 {
+					continue
+				}
+
 				if strings.HasPrefix(token, "DATA:") {
 					anim := AnimationDataFromJson(token)
+					s.onNewAnimationDataCallback(anim)
 					s.RunningAnimations.Store(anim.Id, anim)
 				} else if strings.HasPrefix(token, "AINF:") {
 					info := AnimationInfoFromJson(token)
-					s.SupportedAnimations = append(s.SupportedAnimations, info)
+					s.SupportedAnimations[info.Name] = info
+					s.onNewAnimationInfoCallback(info)
+				} else if strings.HasPrefix(token, "CMD :") {
+					print("Receiving Command is not supported by client")
 				} else if strings.HasPrefix(token, "END :") {
 					anim := EndAnimationFromJson(token)
+					s.onNewEndAnimationCallback(anim)
 					s.RunningAnimations.Delete(anim.Id)
+				} else if strings.HasPrefix(token, "MSG :") {
+					msg := MessageFromJson(token)
+					s.onNewMessageCallback(msg)
 				} else if strings.HasPrefix(token, "SECT:") {
 					sect := SectionFromJson(token)
-					s.Sections = append(s.Sections, sect)
+					s.onNewSectionCallback(sect)
+					s.Sections[sect.Name] = sect
 				} else if strings.HasPrefix(token, "SINF") {
 					info := StripInfoFromJson(token)
-					s.Info = info
+					s.StripInfo = info
+					s.onNewStripInfoCallback(info)
+				} else {
+					print("Unrecognized data type: " + token[:4])
 				}
 			}
 		}
 	}
 }
 
-func (s *AnimationSender) Start() {
-	s.RunningAnimations = NewRunningAnimationMap()
-	s.SupportedAnimations = []*animationInfo{}
-	s.Sections = []*section{}
-	s.connect()
-	go s.receiverLoop()
-}
-
-func (s *AnimationSender) End() {
-	_ = (*s.connection).Close()
-	s.RunningAnimations = nil
-	s.SupportedAnimations = nil
-	s.Sections = nil
+func (s *AnimationSender) send(jsonBytes []byte) {
+	jsonBytes = append(jsonBytes, []byte(";;;")...)
+	_, err := (*s.connection).Write(jsonBytes)
+	if err != nil {
+		println("error sending")
+	}
 }
 
 func (s *AnimationSender) SendAnimationData(data *animationData) {
-	_, err := (*s.connection).Write([]byte(data.Json()))
-	if err != nil {
-		println("error sending")
-	}
+	s.send(data.Json())
+}
+
+func (s *AnimationSender) SendCommand(cmd *Command) {
+	s.send(cmd.Json())
 }
 
 func (s *AnimationSender) SendEndAnimation(endAnim *endAnimation) {
-	_, err := (*s.connection).Write([]byte(endAnim.Json()))
-	if err != nil {
-		println("error sending")
-	}
+	s.send(endAnim.Json())
 }
 
 func (s *AnimationSender) SendSection(sect *section) {
-	_, err := (*s.connection).Write([]byte(sect.Json()))
-	if err != nil {
-		println("error sending")
-	}
+	s.send(sect.Json())
+}
+
+func (s *AnimationSender) SetOnConnectCallback(action func(string, int)) {
+	s.onConnectCallback = action
+}
+
+func (s *AnimationSender) SetOnDisconnectCallback(action func(string, int)) {
+	s.onDisconnectCallback = action
+}
+
+func (s *AnimationSender) SetOnUnableToConnectCallback(action func(string, int)) {
+	s.onUnableToConnectCallback = action
+}
+
+func (s *AnimationSender) SetOnNewAnimationDataCallback(action func(*animationData)) {
+	s.onNewAnimationDataCallback = action
+}
+
+func (s *AnimationSender) SetOnNewAnimationInfoCallback(action func(*animationInfo)) {
+	s.onNewAnimationInfoCallback = action
+}
+
+func (s *AnimationSender) SetOnNewEndAnimationCallback(action func(*endAnimation)) {
+	s.onNewEndAnimationCallback = action
+}
+
+func (s *AnimationSender) SetOnNewMessageCallback(action func(*message)) {
+	s.onNewMessageCallback = action
+}
+
+func (s *AnimationSender) SetOnNewSectionCallback(action func(*section)) {
+	s.onNewSectionCallback = action
+}
+
+func (s *AnimationSender) SetOnNewStripInfoCallback(action func(*stripInfo)) {
+	s.onNewStripInfoCallback = action
 }
