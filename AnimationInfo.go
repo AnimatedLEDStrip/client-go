@@ -66,10 +66,28 @@ func AnimationInfoFromJson(data string) *animationInfo {
 		SpacingDefault:  -1,
 	}
 
-	err := json.Unmarshal([]byte(dataStr), &animInfo)
-	if err != nil &&
-		!(strings.Contains(err.Error(), "cannot unmarshal string") &&
-			strings.Contains(err.Error(), "type animatedledstrip.ParamUsage")) {
+	var infoFilter struct {
+		Name            string `json:"name,omitempty"`
+		Abbr            string `json:"abbr,omitempty"`
+		Description     string `json:"description,omitempty"`
+		SignatureFile   string `json:"signatureFile,omitempty"`
+		Repetitive      bool   `json:"repetitive,omitempty"`
+		MinimumColors   int    `json:"minimumColors,omitempty"`
+		UnlimitedColors bool   `json:"unlimitedColors,omitempty"`
+		DelayDefault    int    `json:"delayDefault,omitempty"`
+		DistanceDefault int    `json:"distanceDefault,omitempty"`
+		SpacingDefault  int    `json:"spacingDefault,omitempty"`
+	}
+	err := json.Unmarshal([]byte(dataStr), &infoFilter)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	jsonBytes, err := json.Marshal(&infoFilter)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	err = json.Unmarshal(jsonBytes, &animInfo)
+	if err != nil {
 		log.Fatal(err.Error())
 	}
 

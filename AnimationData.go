@@ -68,22 +68,39 @@ func (d *animationData) Json() []byte {
 func AnimationDataFromJson(data string) *animationData {
 	dataStr := strings.TrimPrefix(data, "DATA:")
 	animData := AnimationData()
-	err := json.Unmarshal([]byte(dataStr), &animData)
-	if err != nil &&
-		!(strings.Contains(err.Error(), "cannot unmarshal bool") &&
-			strings.Contains(err.Error(), "type animatedledstrip.Continuous")) {
-		log.Fatal(err.Error())
+
+	var dataFilter struct {
+		Animation string            `json:"animation,omitempty"`
+		Center    int               `json:"center,omitempty"`
+		Colors    []*ColorContainer `json:"colors,omitempty"`
+		Delay     int               `json:"delay,omitempty"`
+		DelayMod  float64           `json:"delayMod,omitempty"`
+		Distance  int               `json:"distance,omitempty"`
+		Id        string            `json:"id,omitempty"`
+		Section   string            `json:"section,omitempty"`
+		Spacing   int               `json:"spacing,omitempty"`
 	}
-
-	var getContAndDir interface{}
-
-	err = json.Unmarshal([]byte(dataStr), &getContAndDir)
+	err := json.Unmarshal([]byte(dataStr), &dataFilter)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	gcd := getContAndDir.(map[string]interface{})
+	jsonBytes, err := json.Marshal(&dataFilter)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	err = json.Unmarshal(jsonBytes, &animData)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
-	continuous, _ := gcd["continuous"]
+	var temp interface{}
+	err = json.Unmarshal([]byte(dataStr), &temp)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	remainingData := temp.(map[string]interface{})
+
+	continuous, _ := remainingData["continuous"]
 	switch t := continuous.(type) {
 	case nil:
 		animData.Continuous = DEFAULT
@@ -97,7 +114,7 @@ func AnimationDataFromJson(data string) *animationData {
 		animData.Continuous = DEFAULT
 	}
 
-	direction, _ := gcd["direction"].(string)
+	direction, _ := remainingData["direction"].(string)
 	animData.Direction = DirectionFromString(direction)
 
 	return animData
