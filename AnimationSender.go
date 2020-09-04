@@ -23,6 +23,7 @@
 package animatedledstrip
 
 import (
+	"log"
 	"net"
 	"strconv"
 	"strings"
@@ -119,32 +120,56 @@ func (s *AnimationSender) receiverLoop() {
 				}
 
 				if strings.HasPrefix(token, "DATA:") {
-					anim := AnimationDataFromJson(token)
-					s.onNewAnimationDataCallback(anim)
-					s.RunningAnimations.Store(anim.Id, anim)
+					anim, err := AnimationDataFromJson(token)
+					if err != nil {
+						log.Print(err.Error())
+					} else {
+						s.onNewAnimationDataCallback(anim)
+						s.RunningAnimations.Store(anim.Id, anim)
+					}
 				} else if strings.HasPrefix(token, "AINF:") {
-					info := AnimationInfoFromJson(token)
-					s.SupportedAnimations[info.Name] = info
-					s.onNewAnimationInfoCallback(info)
+					info, err := AnimationInfoFromJson(token)
+					if err != nil {
+						log.Print(err.Error())
+					} else {
+						s.SupportedAnimations[info.Name] = info
+						s.onNewAnimationInfoCallback(info)
+					}
 				} else if strings.HasPrefix(token, "CMD :") {
-					print("Receiving Command is not supported by client")
+					log.Print("WARNING: Receiving Command is not supported by client")
 				} else if strings.HasPrefix(token, "END :") {
-					anim := EndAnimationFromJson(token)
-					s.onNewEndAnimationCallback(anim)
-					s.RunningAnimations.Delete(anim.Id)
+					anim, err := EndAnimationFromJson(token)
+					if err != nil {
+						log.Print(err.Error())
+					} else {
+						s.onNewEndAnimationCallback(anim)
+						s.RunningAnimations.Delete(anim.Id)
+					}
 				} else if strings.HasPrefix(token, "MSG :") {
-					msg := MessageFromJson(token)
-					s.onNewMessageCallback(msg)
+					msg, err := MessageFromJson(token)
+					if err != nil {
+						log.Print(err.Error())
+					} else {
+						s.onNewMessageCallback(msg)
+					}
 				} else if strings.HasPrefix(token, "SECT:") {
-					sect := SectionFromJson(token)
-					s.onNewSectionCallback(sect)
-					s.Sections[sect.Name] = sect
+					sect, err := SectionFromJson(token)
+					if err != nil {
+						log.Print(err.Error())
+					} else {
+						s.onNewSectionCallback(sect)
+						s.Sections[sect.Name] = sect
+					}
 				} else if strings.HasPrefix(token, "SINF") {
-					info := StripInfoFromJson(token)
-					s.StripInfo = info
-					s.onNewStripInfoCallback(info)
+					info, err := StripInfoFromJson(token)
+					if err != nil {
+						log.Print(err.Error())
+					} else {
+						s.StripInfo = info
+						s.onNewStripInfoCallback(info)
+					}
 				} else {
-					print("Unrecognized data type: " + token[:4])
+					log.Print("WARNING: Unrecognized data type: " + token[:4])
 				}
 			}
 		}
@@ -155,24 +180,44 @@ func (s *AnimationSender) send(jsonBytes []byte) {
 	jsonBytes = append(jsonBytes, []byte(";;;")...)
 	_, err := (*s.connection).Write(jsonBytes)
 	if err != nil {
-		println("error sending")
+		log.Print("ERROR: error sending")
 	}
 }
 
 func (s *AnimationSender) SendAnimationData(data *animationData) {
-	s.send(data.Json())
+	jsonBytes, err := data.Json()
+	if err != nil {
+		log.Print(err.Error())
+	} else {
+		s.send(jsonBytes)
+	}
 }
 
 func (s *AnimationSender) SendCommand(cmd *Command) {
-	s.send(cmd.Json())
+	jsonBytes, err := cmd.Json()
+	if err != nil {
+		log.Print(err.Error())
+	} else {
+		s.send(jsonBytes)
+	}
 }
 
 func (s *AnimationSender) SendEndAnimation(endAnim *endAnimation) {
-	s.send(endAnim.Json())
+	jsonBytes, err := endAnim.Json()
+	if err != nil {
+		log.Print(err.Error())
+	} else {
+		s.send(jsonBytes)
+	}
 }
 
 func (s *AnimationSender) SendSection(sect *section) {
-	s.send(sect.Json())
+	jsonBytes, err := sect.Json()
+	if err != nil {
+		log.Print(err.Error())
+	} else {
+		s.send(jsonBytes)
+	}
 }
 
 func (s *AnimationSender) SetOnConnectCallback(action func(string, int)) {

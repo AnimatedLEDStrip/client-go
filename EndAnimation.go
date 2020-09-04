@@ -36,22 +36,24 @@ func EndAnimation() *endAnimation {
 	return &endAnimation{Id: ""}
 }
 
-func (e endAnimation) Json() []byte {
+func (e endAnimation) Json() ([]byte, error) {
 	str, err := json.Marshal(e)
 	if err != nil {
-		log.Fatal(err.Error())
+		return nil, err
+	} else {
+		return append([]byte("END :"), str...), nil
 	}
-	return append([]byte("END :"), str...)
 }
 
-func EndAnimationFromJson(data string) *endAnimation {
+func EndAnimationFromJson(data string) (*endAnimation, error) {
 	dataStr := strings.TrimPrefix(data, "END :")
 	anim := EndAnimation()
 	err := json.Unmarshal([]byte(dataStr), &anim)
 	if err != nil {
-		log.Fatal(err.Error())
+		return nil, err
+	} else {
+		return anim, nil
 	}
-	return anim
 }
 
 func (e *endAnimation) SetId(id string) *endAnimation {

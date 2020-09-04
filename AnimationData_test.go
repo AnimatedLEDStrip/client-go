@@ -188,7 +188,7 @@ func TestAnimationData_Json(t *testing.T) {
 	data.AddColor(&cc)
 	data.AddColor(&cc2)
 
-	json := data.Json()
+	json, _ := data.Json()
 	if string(json) != `DATA:{"animation":"Meteor","center":50,"colors":[{"colors":[255,65280]},{"colors":[16711680]}],"continuous":false,"delay":10,"delayMod":1.5,"direction":"BACKWARD","distance":45,"id":"TEST","section":"SECT","spacing":5}` {
 		t.Fail()
 	}
@@ -197,7 +197,7 @@ func TestAnimationData_Json(t *testing.T) {
 func TestAnimationData_FromGoodJson(t *testing.T) {
 	jsonStr := `DATA:{"animation":"Meteor","center":50,"colors":[{"colors":[255,65280]},{"colors":[16711680]}],"continuous":false,"delay":10,"delayMod":1.5,"direction":"BACKWARD","distance":45,"id":"TEST","section":"SECT","spacing":5}`
 
-	data := AnimationDataFromJson(jsonStr)
+	data, _ := AnimationDataFromJson(jsonStr)
 
 	if data.Animation != "Meteor" {
 		log.Print("Failed data.Animation check")
@@ -253,7 +253,7 @@ func TestAnimationData_FromGoodJson(t *testing.T) {
 func TestAnimationData_FromBadJson(t *testing.T) {
 	jsonStr := "{}"
 
-	data := AnimationDataFromJson(jsonStr)
+	data, _ := AnimationDataFromJson(jsonStr)
 
 	if data.Animation != "Color" {
 		log.Print("Failed data.Animation check")
@@ -296,28 +296,28 @@ func TestAnimationData_ContinuousFromJson(t *testing.T) {
 	// Tests for other continuous values
 
 	jsonStr := `{"continuous":null}`
-	data := AnimationDataFromJson(jsonStr)
+	data, _ := AnimationDataFromJson(jsonStr)
 	if data.Continuous != DEFAULT {
 		log.Print("Failed null -> DEFAULT")
 		t.Fail()
 	}
 
 	jsonStr = `{"continuous":true}`
-	data = AnimationDataFromJson(jsonStr)
+	data, _ = AnimationDataFromJson(jsonStr)
 	if data.Continuous != CONTINUOUS {
 		log.Print("Failed true -> CONTINUOUS")
 		t.Fail()
 	}
 
 	jsonStr = `{"continuous":false}`
-	data = AnimationDataFromJson(jsonStr)
+	data, _ = AnimationDataFromJson(jsonStr)
 	if data.Continuous != NONCONTINUOUS {
 		log.Print("Failed false -> NONCONTINUOUS")
 		t.Fail()
 	}
 
 	jsonStr = `{"continuous":-1}`
-	data = AnimationDataFromJson(jsonStr)
+	data, _ = AnimationDataFromJson(jsonStr)
 	if data.Continuous != DEFAULT {
 		log.Print("Failed -1 -> DEFAULT")
 		t.Fail()

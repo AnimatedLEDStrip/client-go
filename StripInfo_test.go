@@ -30,7 +30,7 @@ import (
 func TestStripInfoFromJson(t *testing.T) {
 	jsonStr := `SINF:{"numLEDs":240,"pin":12,"imageDebugging":false,"rendersBeforeSave":1000,"threadCount":100}`
 
-	info := StripInfoFromJson(jsonStr)
+	info, _ := StripInfoFromJson(jsonStr)
 
 	if info.NumLEDs != 240 {
 		log.Print("Failed info.NumLEDs check")

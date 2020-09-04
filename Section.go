@@ -58,22 +58,24 @@ func Section() *section {
 	}
 }
 
-func (s *section) Json() []byte {
+func (s *section) Json() ([]byte, error) {
 	str, err := json.Marshal(s)
 	if err != nil {
-		log.Fatal(err.Error())
+		return nil, err
+	} else {
+		return append([]byte("SECT:"), str...), nil
 	}
-	return append([]byte("SECT:"), str...)
 }
 
-func SectionFromJson(data string) *section {
+func SectionFromJson(data string) (*section, error) {
 	dataStr := strings.TrimPrefix(data, "SECT:")
 	sect := Section()
 	err := json.Unmarshal([]byte(dataStr), sect)
 	if err != nil {
-		log.Fatal(err.Error())
+		return nil, err
+	} else {
+		return sect, nil
 	}
-	return sect
 }
 
 func (s *section) SetName(name string) *section {

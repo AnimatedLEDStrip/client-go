@@ -24,7 +24,6 @@ package animatedledstrip
 
 import (
 	"encoding/json"
-	"log"
 	"strings"
 )
 
@@ -36,7 +35,7 @@ type stripInfo struct {
 	ThreadCount       int  `json:"threadCount"`
 }
 
-func StripInfoFromJson(data string) *stripInfo {
+func StripInfoFromJson(data string) (*stripInfo, error) {
 	dataStr := strings.TrimPrefix(data, "SINF:")
 	info := stripInfo{
 		NumLEDs:           0,
@@ -47,7 +46,8 @@ func StripInfoFromJson(data string) *stripInfo {
 	}
 	err := json.Unmarshal([]byte(dataStr), &info)
 	if err != nil {
-		log.Fatal(err.Error())
+		return nil, err
+	} else {
+		return &info, nil
 	}
-	return &info
 }

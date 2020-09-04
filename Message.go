@@ -24,7 +24,6 @@ package animatedledstrip
 
 import (
 	"encoding/json"
-	"log"
 	"strings"
 )
 
@@ -32,12 +31,13 @@ type message struct {
 	Message string `json:"message"`
 }
 
-func MessageFromJson(data string) *message {
+func MessageFromJson(data string) (*message, error) {
 	dataStr := strings.TrimPrefix(data, "MSG :")
 	msg := message{}
 	err := json.Unmarshal([]byte(dataStr), &msg)
 	if err != nil {
-		log.Fatal(err.Error())
+		return nil, err
+	} else {
+		return &msg, nil
 	}
-	return &msg
 }

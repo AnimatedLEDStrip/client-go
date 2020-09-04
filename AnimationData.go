@@ -24,7 +24,6 @@ package animatedledstrip
 
 import (
 	"encoding/json"
-	"log"
 	"strings"
 )
 
@@ -57,15 +56,16 @@ func AnimationData() *animationData {
 	}
 }
 
-func (d *animationData) Json() []byte {
+func (d *animationData) Json() ([]byte, error) {
 	str, err := json.Marshal(d)
 	if err != nil {
-		log.Fatal(err.Error())
+		return nil, err
+	} else {
+		return append([]byte("DATA:"), str...), nil
 	}
-	return append([]byte("DATA:"), str...)
 }
 
-func AnimationDataFromJson(data string) *animationData {
+func AnimationDataFromJson(data string) (*animationData, error) {
 	dataStr := strings.TrimPrefix(data, "DATA:")
 	animData := AnimationData()
 
@@ -82,7 +82,7 @@ func AnimationDataFromJson(data string) *animationData {
 	}
 	err := json.Unmarshal([]byte(dataStr), &dataFilter)
 	if err != nil {
-		log.Fatal(err.Error())
+		return nil, err
 	}
 	jsonBytes, _ := json.Marshal(&dataFilter)
 	_ = json.Unmarshal(jsonBytes, &animData)
@@ -108,7 +108,7 @@ func AnimationDataFromJson(data string) *animationData {
 	direction, _ := remainingData["direction"].(string)
 	animData.Direction = DirectionFromString(direction)
 
-	return animData
+	return animData, nil
 }
 
 func (d *animationData) SetAnimation(anim string) *animationData {

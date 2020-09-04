@@ -81,7 +81,7 @@ func TestSection_Json(t *testing.T) {
 	sect.SetStartPixel(30)
 	sect.SetEndPixel(40)
 
-	json := sect.Json()
+	json, _ := sect.Json()
 	if string(json) != `SECT:{"name":"Section","startPixel":30,"endPixel":40}` {
 		t.Fail()
 	}
@@ -90,7 +90,7 @@ func TestSection_Json(t *testing.T) {
 func TestSection_FromGoodJson(t *testing.T) {
 	jsonStr := `SECT:{"physicalStart":0,"numLEDs":240,"name":"section","startPixel":0,"endPixel":239}`
 
-	sect := SectionFromJson(jsonStr)
+	sect, _ := SectionFromJson(jsonStr)
 
 	if sect.Name != "section" {
 		log.Print("Failed sect.Name check")
@@ -113,7 +113,7 @@ func TestSection_FromGoodJson(t *testing.T) {
 func TestSection_FromBadJson(t *testing.T) {
 	jsonStr := "{}"
 
-	sect := SectionFromJson(jsonStr)
+	sect, _ := SectionFromJson(jsonStr)
 
 	if sect.Name != "" {
 		log.Print("Failed sect.Name check")

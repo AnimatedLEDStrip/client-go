@@ -31,10 +31,11 @@ type Command struct {
 	Cmd string `json:"command"`
 }
 
-func (c *Command) Json() []byte {
+func (c *Command) Json() ([]byte, error) {
 	str, err := json.Marshal(c)
 	if err != nil {
-		log.Fatal(err.Error())
+		return nil, err
+	} else {
+		return append([]byte("CMD :"), str...), nil
 	}
-	return append([]byte("CMD :"), str...)
 }

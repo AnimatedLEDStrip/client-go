@@ -27,7 +27,7 @@ import "testing"
 func TestMessageFromJson(t *testing.T) {
 	jsonStr := `MSG :{"message":"A message"}`
 
-	msg := MessageFromJson(jsonStr)
+	msg, _ := MessageFromJson(jsonStr)
 
 	if msg.Message != "A message" {
 		t.Fail()

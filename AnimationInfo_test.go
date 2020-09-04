@@ -30,7 +30,7 @@ import (
 func TestAnimationInfoFromJson(t *testing.T) {
 	jsonStr := `AINF:{"name":"Alternate","abbr":"ALT","description":"A description","signatureFile":"alternate.png","repetitive":true,"minimumColors":2,"unlimitedColors":false,"center":"NOTUSED","delay":"USED","direction":"NOTUSED","distance":"NOTUSED","spacing":"NOTUSED","delayDefault":1000,"distanceDefault":-1,"spacingDefault":3}`
 
-	info := AnimationInfoFromJson(jsonStr)
+	info, _ := AnimationInfoFromJson(jsonStr)
 
 	if info.Name != "Alternate" {
 		log.Print("Failed info.Name check")

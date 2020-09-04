@@ -24,7 +24,6 @@ package animatedledstrip
 
 import (
 	"encoding/json"
-	"log"
 	"strings"
 )
 
@@ -46,7 +45,7 @@ type animationInfo struct {
 	SpacingDefault  int        `json:"spacingDefault"`
 }
 
-func AnimationInfoFromJson(data string) *animationInfo {
+func AnimationInfoFromJson(data string) (*animationInfo, error) {
 	dataStr := strings.TrimPrefix(data, "AINF:")
 	animInfo := animationInfo{
 		Name:            "",
@@ -80,7 +79,7 @@ func AnimationInfoFromJson(data string) *animationInfo {
 	}
 	err := json.Unmarshal([]byte(dataStr), &infoFilter)
 	if err != nil {
-		log.Fatal(err.Error())
+		return nil, err
 	}
 	jsonBytes, _ := json.Marshal(&infoFilter)
 	_ = json.Unmarshal(jsonBytes, &animInfo)
@@ -104,5 +103,5 @@ func AnimationInfoFromJson(data string) *animationInfo {
 	spacing := usg["spacing"].(string)
 	animInfo.Spacing = ParamUsageFromString(spacing)
 
-	return &animInfo
+	return &animInfo, nil
 }
