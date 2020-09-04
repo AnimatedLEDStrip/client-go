@@ -82,20 +82,11 @@ func AnimationInfoFromJson(data string) *animationInfo {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	jsonBytes, err := json.Marshal(&infoFilter)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	err = json.Unmarshal(jsonBytes, &animInfo)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	jsonBytes, _ := json.Marshal(&infoFilter)
+	_ = json.Unmarshal(jsonBytes, &animInfo)
 
 	var getUsages interface{}
-	err = json.Unmarshal([]byte(dataStr), &getUsages)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	_ = json.Unmarshal([]byte(dataStr), &getUsages)
 	usg := getUsages.(map[string]interface{})
 
 	// No need to specify a default for

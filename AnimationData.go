@@ -84,20 +84,11 @@ func AnimationDataFromJson(data string) *animationData {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	jsonBytes, err := json.Marshal(&dataFilter)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	err = json.Unmarshal(jsonBytes, &animData)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	jsonBytes, _ := json.Marshal(&dataFilter)
+	_ = json.Unmarshal(jsonBytes, &animData)
 
 	var temp interface{}
-	err = json.Unmarshal([]byte(dataStr), &temp)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	_ = json.Unmarshal([]byte(dataStr), &temp)
 	remainingData := temp.(map[string]interface{})
 
 	continuous, _ := remainingData["continuous"]
