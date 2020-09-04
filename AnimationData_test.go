@@ -315,4 +315,11 @@ func TestAnimationData_ContinuousFromJson(t *testing.T) {
 		log.Print("Failed false -> NONCONTINUOUS")
 		t.Fail()
 	}
+
+	jsonStr = `{"continuous":-1}`
+	data = AnimationDataFromJson(jsonStr)
+	if data.Continuous != DEFAULT {
+		log.Print("Failed -1 -> DEFAULT")
+		t.Fail()
+	}
 }
