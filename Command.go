@@ -24,7 +24,6 @@ package animatedledstrip
 
 import (
 	"encoding/json"
-	"log"
 )
 
 type Command struct {
