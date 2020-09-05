@@ -42,7 +42,7 @@ func StripInfoFromJson(data string) (*stripInfo, error) {
 		Pin:               -1,
 		ImageDebugging:    false,
 		RendersBeforeSave: -1,
-		ThreadCount:       100,
+		ThreadCount:       -1,
 	}
 	err := json.Unmarshal([]byte(dataStr), &info)
 	if err != nil {

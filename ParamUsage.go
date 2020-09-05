@@ -29,10 +29,6 @@ const (
 	NOTUSED
 )
 
-func (u ParamUsage) MarshalJSON() ([]byte, error) {
-	return []byte(u.String()), nil
-}
-
 func (u ParamUsage) String() string {
 	switch u {
 	case USED:

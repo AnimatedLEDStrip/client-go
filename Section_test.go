@@ -111,7 +111,7 @@ func TestSection_FromGoodJson(t *testing.T) {
 }
 
 func TestSection_FromBadJson(t *testing.T) {
-	jsonStr := "{}"
+	jsonStr := "SECT:{}"
 
 	sect, _ := SectionFromJson(jsonStr)
 
@@ -129,6 +129,16 @@ func TestSection_FromBadJson(t *testing.T) {
 		t.Fail()
 	} else if sect.NumLEDs != 0 {
 		log.Print("Failed sect.NumLEDs check")
+		t.Fail()
+	}
+}
+
+func TestSection_FromJsonErr(t *testing.T) {
+	jsonStr := `SECT:{"name":false}`
+
+	_, err := SectionFromJson(jsonStr)
+
+	if err == nil {
 		t.Fail()
 	}
 }

@@ -24,12 +24,32 @@ package animatedledstrip
 
 import "testing"
 
-func TestMessageFromJson(t *testing.T) {
+func TestMessage_FromGoodJson(t *testing.T) {
 	jsonStr := `MSG :{"message":"A message"}`
 
 	msg, _ := MessageFromJson(jsonStr)
 
 	if msg.Message != "A message" {
+		t.Fail()
+	}
+}
+
+func TestMessage_FromBadJson(t *testing.T) {
+	jsonStr := `MSG :{}`
+
+	msg, _ := MessageFromJson(jsonStr)
+
+	if msg.Message != "" {
+		t.Fail()
+	}
+}
+
+func TestMessage_FromJson_Err(t *testing.T) {
+	jsonStr := `MSG :{"message":5}`
+
+	_, err := MessageFromJson(jsonStr)
+
+	if err == nil {
 		t.Fail()
 	}
 }

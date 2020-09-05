@@ -33,7 +33,7 @@ type message struct {
 
 func MessageFromJson(data string) (*message, error) {
 	dataStr := strings.TrimPrefix(data, "MSG :")
-	msg := message{}
+	msg := message{Message: ""}
 	err := json.Unmarshal([]byte(dataStr), &msg)
 	if err != nil {
 		return nil, err

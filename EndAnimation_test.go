@@ -53,12 +53,32 @@ func TestEndAnimation_Json(t *testing.T) {
 	}
 }
 
-func TestEndAnimationFromJson(t *testing.T) {
+func TestEndAnimation_FromGoodJson(t *testing.T) {
 	jsonStr := `END :{"id":"13579"}`
 
 	anim, _ := EndAnimationFromJson(jsonStr)
 
 	if anim.Id != "13579" {
+		t.Fail()
+	}
+}
+
+func TestEndAnimation_FromBadJson(t *testing.T) {
+	jsonStr := `END :{}`
+
+	anim, _ := EndAnimationFromJson(jsonStr)
+
+	if anim.Id != "" {
+		t.Fail()
+	}
+}
+
+func TestEndAnimation_FromJson_Err(t *testing.T) {
+	jsonStr := `END :{"id":false}`
+
+	_, err := EndAnimationFromJson(jsonStr)
+
+	if err == nil {
 		t.Fail()
 	}
 }

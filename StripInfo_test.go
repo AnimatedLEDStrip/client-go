@@ -27,8 +27,8 @@ import (
 	"testing"
 )
 
-func TestStripInfoFromJson(t *testing.T) {
-	jsonStr := `SINF:{"numLEDs":240,"pin":12,"imageDebugging":false,"rendersBeforeSave":1000,"threadCount":100}`
+func TestStripInfo_FromGoodJson(t *testing.T) {
+	jsonStr := `SINF:{"numLEDs":240,"pin":12,"imageDebugging":true,"rendersBeforeSave":1000,"threadCount":100}`
 
 	info, _ := StripInfoFromJson(jsonStr)
 
@@ -38,7 +38,7 @@ func TestStripInfoFromJson(t *testing.T) {
 	} else if info.Pin != 12 {
 		log.Print("Failed info.Pin check")
 		t.Fail()
-	} else if info.ImageDebugging != false {
+	} else if info.ImageDebugging != true {
 		log.Print("Failed info.ImageDebugging check")
 		t.Fail()
 	} else if info.RendersBeforeSave != 1000 {
@@ -46,6 +46,39 @@ func TestStripInfoFromJson(t *testing.T) {
 		t.Fail()
 	} else if info.ThreadCount != 100 {
 		log.Print("Failed info.ThreadCount check")
+		t.Fail()
+	}
+}
+
+func TestStripInfo_FromBadJson(t *testing.T) {
+	jsonStr := `SINF:{}`
+
+	info, _ := StripInfoFromJson(jsonStr)
+
+	if info.NumLEDs != 0 {
+		log.Print("Failed info.NumLEDs check")
+		t.Fail()
+	} else if info.Pin != -1 {
+		log.Print("Failed info.Pin check")
+		t.Fail()
+	} else if info.ImageDebugging != false {
+		log.Print("Failed info.ImageDebugging check")
+		t.Fail()
+	} else if info.RendersBeforeSave != -1 {
+		log.Print("Failed info.RendersBeforeSave check")
+		t.Fail()
+	} else if info.ThreadCount != -1 {
+		log.Print("Failed info.ThreadCount check")
+		t.Fail()
+	}
+}
+
+func TestStripInfo_FromJson_Err(t *testing.T) {
+	jsonStr := `SINF:{"numLEDs":false}`
+
+	_, err := StripInfoFromJson(jsonStr)
+
+	if err == nil {
 		t.Fail()
 	}
 }
