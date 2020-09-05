@@ -81,7 +81,7 @@ func TestSection_Json(t *testing.T) {
 	sect.SetStartPixel(30)
 	sect.SetEndPixel(40)
 
-	json, _ := sect.Json()
+	json := sect.Json()
 	if string(json) != `SECT:{"name":"Section","startPixel":30,"endPixel":40}` {
 		t.Fail()
 	}

@@ -56,13 +56,9 @@ func AnimationData() *animationData {
 	}
 }
 
-func (d *animationData) Json() ([]byte, error) {
-	str, err := json.Marshal(d)
-	if err != nil {
-		return nil, err
-	} else {
-		return append([]byte("DATA:"), str...), nil
-	}
+func (d *animationData) Json() []byte {
+	str, _ := json.Marshal(d)
+	return append([]byte("DATA:"), str...)
 }
 
 func AnimationDataFromJson(data string) (*animationData, error) {

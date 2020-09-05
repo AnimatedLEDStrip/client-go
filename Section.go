@@ -57,13 +57,9 @@ func Section() *section {
 	}
 }
 
-func (s *section) Json() ([]byte, error) {
-	str, err := json.Marshal(s)
-	if err != nil {
-		return nil, err
-	} else {
-		return append([]byte("SECT:"), str...), nil
-	}
+func (s *section) Json() []byte {
+	str, _ := json.Marshal(s)
+	return append([]byte("SECT:"), str...)
 }
 
 func SectionFromJson(data string) (*section, error) {

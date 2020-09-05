@@ -26,7 +26,7 @@ import "testing"
 
 func TestCommand_Json(t *testing.T) {
 	cmd := Command{Cmd: "A command"}
-	json, _ := cmd.Json()
+	json := cmd.Json()
 	if string(json) != `CMD :{"command":"A command"}` {
 		t.Fail()
 	}

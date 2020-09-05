@@ -188,7 +188,7 @@ func TestAnimationData_Json(t *testing.T) {
 	data.AddColor(&cc)
 	data.AddColor(&cc2)
 
-	json, _ := data.Json()
+	json := data.Json()
 	if string(json) != `DATA:{"animation":"Meteor","center":50,"colors":[{"colors":[255,65280]},{"colors":[16711680]}],"continuous":false,"delay":10,"delayMod":1.5,"direction":"BACKWARD","distance":45,"id":"TEST","section":"SECT","spacing":5}` {
 		t.Fail()
 	}
@@ -290,6 +290,15 @@ func TestAnimationData_FromBadJson(t *testing.T) {
 		t.Fail()
 	}
 
+}
+
+func TestAnimationData_FromJson_Err(t *testing.T) {
+	jsonStr := `{"animation":5}`
+
+	_, err := AnimationDataFromJson(jsonStr)
+	if err == nil {
+		t.Fail()
+	}
 }
 
 func TestAnimationData_ContinuousFromJson(t *testing.T) {

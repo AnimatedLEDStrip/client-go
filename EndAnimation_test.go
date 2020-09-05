@@ -47,7 +47,7 @@ func TestEndAnimation_Json(t *testing.T) {
 
 	anim.SetId("54321")
 
-	json, _ := anim.Json()
+	json := anim.Json()
 	if string(json) != `END :{"id":"54321"}` {
 		t.Fail()
 	}

@@ -35,13 +35,9 @@ func EndAnimation() *endAnimation {
 	return &endAnimation{Id: ""}
 }
 
-func (e endAnimation) Json() ([]byte, error) {
-	str, err := json.Marshal(e)
-	if err != nil {
-		return nil, err
-	} else {
-		return append([]byte("END :"), str...), nil
-	}
+func (e endAnimation) Json() []byte {
+	str, _ := json.Marshal(e)
+	return append([]byte("END :"), str...)
 }
 
 func EndAnimationFromJson(data string) (*endAnimation, error) {

@@ -185,39 +185,19 @@ func (s *AnimationSender) send(jsonBytes []byte) {
 }
 
 func (s *AnimationSender) SendAnimationData(data *animationData) {
-	jsonBytes, err := data.Json()
-	if err != nil {
-		log.Print(err.Error())
-	} else {
-		s.send(jsonBytes)
-	}
+	s.send(data.Json())
 }
 
 func (s *AnimationSender) SendCommand(cmd *Command) {
-	jsonBytes, err := cmd.Json()
-	if err != nil {
-		log.Print(err.Error())
-	} else {
-		s.send(jsonBytes)
-	}
+	s.send(cmd.Json())
 }
 
 func (s *AnimationSender) SendEndAnimation(endAnim *endAnimation) {
-	jsonBytes, err := endAnim.Json()
-	if err != nil {
-		log.Print(err.Error())
-	} else {
-		s.send(jsonBytes)
-	}
+	s.send(endAnim.Json())
 }
 
 func (s *AnimationSender) SendSection(sect *section) {
-	jsonBytes, err := sect.Json()
-	if err != nil {
-		log.Print(err.Error())
-	} else {
-		s.send(jsonBytes)
-	}
+	s.send(sect.Json())
 }
 
 func (s *AnimationSender) SetOnConnectCallback(action func(string, int)) {
