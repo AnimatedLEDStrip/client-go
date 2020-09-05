@@ -106,72 +106,88 @@ func (s *AnimationSender) receiverLoop() {
 		}
 
 		if length > 0 {
-			input := string(buff)
-			tokens := strings.Split(s.partialData+input, ";;;")
-			s.partialData = ""
-			if !strings.HasSuffix(input, ";;;") {
-				s.partialData = tokens[len(tokens)-1]
-				tokens = tokens[:len(tokens)-1]
-			}
-			for i := 0; i < len(tokens); i++ {
-				token := tokens[i]
-				if len(token) == 0 {
-					continue
-				}
+			s.processData(buff)
+		}
+	}
+}
 
-				if strings.HasPrefix(token, "DATA:") {
-					anim, err := AnimationDataFromJson(token)
-					if err != nil {
-						log.Print(err.Error())
-					} else {
-						s.onNewAnimationDataCallback(anim)
-						s.RunningAnimations.Store(anim.Id, anim)
-					}
-				} else if strings.HasPrefix(token, "AINF:") {
-					info, err := AnimationInfoFromJson(token)
-					if err != nil {
-						log.Print(err.Error())
-					} else {
-						s.SupportedAnimations[info.Name] = info
-						s.onNewAnimationInfoCallback(info)
-					}
-				} else if strings.HasPrefix(token, "CMD :") {
-					log.Print("WARNING: Receiving Command is not supported by client")
-				} else if strings.HasPrefix(token, "END :") {
-					anim, err := EndAnimationFromJson(token)
-					if err != nil {
-						log.Print(err.Error())
-					} else {
-						s.onNewEndAnimationCallback(anim)
-						s.RunningAnimations.Delete(anim.Id)
-					}
-				} else if strings.HasPrefix(token, "MSG :") {
-					msg, err := MessageFromJson(token)
-					if err != nil {
-						log.Print(err.Error())
-					} else {
-						s.onNewMessageCallback(msg)
-					}
-				} else if strings.HasPrefix(token, "SECT:") {
-					sect, err := SectionFromJson(token)
-					if err != nil {
-						log.Print(err.Error())
-					} else {
-						s.onNewSectionCallback(sect)
-						s.Sections[sect.Name] = sect
-					}
-				} else if strings.HasPrefix(token, "SINF") {
-					info, err := StripInfoFromJson(token)
-					if err != nil {
-						log.Print(err.Error())
-					} else {
-						s.StripInfo = info
-						s.onNewStripInfoCallback(info)
-					}
-				} else {
-					log.Print("WARNING: Unrecognized data type: " + token[:4])
+func (s *AnimationSender) processData(buff []byte) {
+	input := string(buff)
+	tokens := strings.Split(s.partialData+input, ";;;")
+	s.partialData = ""
+	if !strings.HasSuffix(input, ";;;") {
+		s.partialData = tokens[len(tokens)-1]
+		tokens = tokens[:len(tokens)-1]
+	}
+	for i := 0; i < len(tokens); i++ {
+		token := tokens[i]
+		if len(token) == 0 {
+			continue
+		}
+
+		if strings.HasPrefix(token, "DATA:") {
+			anim, err := AnimationDataFromJson(token)
+			if err != nil {
+				log.Print(err.Error())
+			} else {
+				if s.onNewAnimationDataCallback != nil {
+					s.onNewAnimationDataCallback(anim)
+				}
+				s.RunningAnimations.Store(anim.Id, anim)
+			}
+		} else if strings.HasPrefix(token, "AINF:") {
+			info, err := AnimationInfoFromJson(token)
+			if err != nil {
+				log.Print(err.Error())
+			} else {
+				s.SupportedAnimations[info.Name] = info
+				if s.onNewAnimationInfoCallback != nil {
+					s.onNewAnimationInfoCallback(info)
 				}
 			}
+		} else if strings.HasPrefix(token, "CMD :") {
+			log.Print("WARNING: Receiving Command is not supported by client")
+		} else if strings.HasPrefix(token, "END :") {
+			anim, err := EndAnimationFromJson(token)
+			if err != nil {
+				log.Print(err.Error())
+			} else {
+				if s.onNewEndAnimationCallback != nil {
+					s.onNewEndAnimationCallback(anim)
+				}
+				s.RunningAnimations.Delete(anim.Id)
+			}
+		} else if strings.HasPrefix(token, "MSG :") {
+			msg, err := MessageFromJson(token)
+			if err != nil {
+				log.Print(err.Error())
+			} else {
+				if s.onNewMessageCallback != nil {
+					s.onNewMessageCallback(msg)
+				}
+			}
+		} else if strings.HasPrefix(token, "SECT:") {
+			sect, err := SectionFromJson(token)
+			if err != nil {
+				log.Print(err.Error())
+			} else {
+				if s.onNewSectionCallback != nil {
+					s.onNewSectionCallback(sect)
+				}
+				s.Sections[sect.Name] = sect
+			}
+		} else if strings.HasPrefix(token, "SINF") {
+			info, err := StripInfoFromJson(token)
+			if err != nil {
+				log.Print(err.Error())
+			} else {
+				s.StripInfo = info
+				if s.onNewStripInfoCallback != nil {
+					s.onNewStripInfoCallback(info)
+				}
+			}
+		} else {
+			log.Print("WARNING: Unrecognized data type: " + token[:4])
 		}
 	}
 }
