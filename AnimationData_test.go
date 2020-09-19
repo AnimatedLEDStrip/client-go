@@ -23,56 +23,31 @@
 package animatedledstrip
 
 import (
-	"log"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestAnimationData(t *testing.T) {
 	data := AnimationData()
 
-	if data.Animation != "Color" {
-		log.Print("Failed data.Animation check")
-		t.Fail()
-	} else if len(data.Colors) != 0 {
-		log.Print("Failed data.Colors check")
-		t.Fail()
-	} else if data.Center != -1 {
-		log.Print("Failed data.Center check")
-		t.Fail()
-	} else if data.Continuous != DEFAULT {
-		log.Print("Failed data.Continuous check")
-		t.Fail()
-	} else if data.Delay != -1 {
-		log.Print("Failed data.Delay check")
-		t.Fail()
-	} else if data.DelayMod != 1.0 {
-		log.Print("Failed data.DelayMod check")
-		t.Fail()
-	} else if data.Direction != FORWARD {
-		log.Print("Failed data.Direction check")
-		t.Fail()
-	} else if data.Distance != -1 {
-		log.Print("Failed data.Distance check")
-		t.Fail()
-	} else if data.Id != "" {
-		log.Print("Failed data.Id check")
-		t.Fail()
-	} else if data.Section != "" {
-		log.Print("Failed data.Section check")
-		t.Fail()
-	} else if data.Spacing != -1 {
-		log.Print("Failed data.Spacing check")
-		t.Fail()
-	}
+	assert.Equal(t, data.Animation, "Color")
+	assert.Len(t, data.Colors, 0)
+	assert.Equal(t, data.Center, -1)
+	assert.Equal(t, data.Continuous, DEFAULT)
+	assert.Equal(t, data.Delay, -1)
+	assert.Equal(t, data.DelayMod, 1.0)
+	assert.Equal(t, data.Direction, FORWARD)
+	assert.Equal(t, data.Distance, -1)
+	assert.Equal(t, data.Id, "")
+	assert.Equal(t, data.Section, "")
+	assert.Equal(t, data.Spacing, -1)
 }
 
 func TestAnimationData_SetAnimation(t *testing.T) {
 	data := AnimationData()
 	data.SetAnimation("Bounce")
 
-	if data.Animation != "Bounce" {
-		t.Fail()
-	}
+	assert.Equal(t, data.Animation, "Bounce")
 }
 
 func TestAnimationData_AddColor(t *testing.T) {
@@ -82,90 +57,71 @@ func TestAnimationData_AddColor(t *testing.T) {
 	data := AnimationData()
 	data.AddColor(&cc)
 
-	if len(data.Colors) != 1 {
-		t.Fail()
-	}
+	assert.Len(t, data.Colors, 1)
+	assert.Equal(t, data.Colors[0].Colors[0], 0xFF)
 }
 
 func TestAnimationData_SetCenter(t *testing.T) {
 	data := AnimationData()
 	data.SetCenter(50)
 
-	if data.Center != 50 {
-		t.Fail()
-	}
+	assert.Equal(t, data.Center, 50)
 }
 
 func TestAnimationData_SetContinuous(t *testing.T) {
 	data := AnimationData()
 	data.SetContinuous(CONTINUOUS)
 
-	if data.Continuous != CONTINUOUS {
-		t.Fail()
-	}
+	assert.Equal(t, data.Continuous, CONTINUOUS)
 }
 
 func TestAnimationData_SetDelay(t *testing.T) {
 	data := AnimationData()
 	data.SetDelay(200)
 
-	if data.Delay != 200 {
-		t.Fail()
-	}
+	assert.Equal(t, data.Delay, 200)
 }
 
 func TestAnimationData_SetDelayMod(t *testing.T) {
 	data := AnimationData()
 	data.SetDelayMod(2.0)
 
-	if data.DelayMod != 2.0 {
-		t.Fail()
-	}
+	assert.Equal(t, data.DelayMod, 2.0)
 }
 
 func TestAnimationData_SetDirection(t *testing.T) {
 	data := AnimationData()
 	data.SetDirection(BACKWARD)
 
-	if data.Direction != BACKWARD {
-		t.Fail()
-	}
+	assert.Equal(t, data.Direction, BACKWARD)
 }
 
 func TestAnimationData_SetDistance(t *testing.T) {
 	data := AnimationData()
 	data.SetDistance(35)
 
-	if data.Distance != 35 {
-		t.Fail()
-	}
+	assert.Equal(t, data.Distance, 35)
 }
 
 func TestAnimationData_SetID(t *testing.T) {
 	data := AnimationData()
 	data.SetID("TEST")
 
-	if data.Id != "TEST" {
-		t.Fail()
-	}
+	assert.Equal(t, data.Id, "TEST")
 }
 
 func TestAnimationData_SetSection(t *testing.T) {
 	data := AnimationData()
 	data.SetSection("SECT")
 
-	if data.Section != "SECT" {
-		t.Fail()
-	}
+	assert.Equal(t, data.Section, "SECT")
 }
 
 func TestAnimationData_SetSpacing(t *testing.T) {
 	data := AnimationData()
 	data.SetSpacing(4)
 
-	if data.Spacing != 4 {
-		t.Fail()
-	}
+	assert.Equal(t, data.Spacing, 4)
 }
 
 func TestAnimationData_Json(t *testing.T) {
@@ -189,9 +145,8 @@ func TestAnimationData_Json(t *testing.T) {
 	data.AddColor(&cc2)
 
 	json := data.Json()
-	if string(json) != `DATA:{"animation":"Meteor","center":50,"colors":[{"colors":[255,65280]},{"colors":[16711680]}],"continuous":false,"delay":10,"delayMod":1.5,"direction":"BACKWARD","distance":45,"id":"TEST","section":"SECT","spacing":5}` {
-		t.Fail()
-	}
+
+	assert.Equal(t, string(json), `DATA:{"animation":"Meteor","center":50,"colors":[{"colors":[255,65280]},{"colors":[16711680]}],"continuous":false,"delay":10,"delayMod":1.5,"direction":"BACKWARD","distance":45,"id":"TEST","section":"SECT","spacing":5}`)
 }
 
 func TestAnimationData_FromGoodJson(t *testing.T) {
@@ -199,55 +154,22 @@ func TestAnimationData_FromGoodJson(t *testing.T) {
 
 	data, _ := AnimationDataFromJson(jsonStr)
 
-	if data.Animation != "Meteor" {
-		log.Print("Failed data.Animation check")
-		t.Fail()
-	} else if len(data.Colors) != 2 {
-		log.Print("Failed data.Colors check")
-		t.Fail()
-	} else if len(data.Colors[0].Colors) != 2 {
-		log.Print("Failed data.Colors[0].Colors check")
-		t.Fail()
-	} else if len(data.Colors[1].Colors) != 1 {
-		log.Print("Failed data.Colors[1].Colors check")
-		t.Fail()
-	} else if data.Colors[0].Colors[0] != 0xFF {
-		log.Print("Failed data.Colors[0].Colors[0] check")
-		t.Fail()
-	} else if data.Colors[0].Colors[1] != 0xFF00 {
-		log.Print("Failed data.Colors[0].Colors[1] check")
-		t.Fail()
-	} else if data.Colors[1].Colors[0] != 0xFF0000 {
-		log.Print("Failed data.Colors[1].Colors[0] check")
-		t.Fail()
-	} else if data.Center != 50 {
-		log.Print("Failed data.Center check")
-		t.Fail()
-	} else if data.Continuous != NONCONTINUOUS {
-		log.Print("Failed data.Continuous check")
-		t.Fail()
-	} else if data.Delay != 10 {
-		log.Print("Failed data.Delay check")
-		t.Fail()
-	} else if data.DelayMod != 1.5 {
-		log.Print("Failed data.DelayMod check")
-		t.Fail()
-	} else if data.Direction != BACKWARD {
-		log.Print("Failed data.Direction check")
-		t.Fail()
-	} else if data.Distance != 45 {
-		log.Print("Failed data.Distance check")
-		t.Fail()
-	} else if data.Id != "TEST" {
-		log.Print("Failed data.Id check")
-		t.Fail()
-	} else if data.Section != "SECT" {
-		log.Print("Failed data.Section check")
-		t.Fail()
-	} else if data.Spacing != 5 {
-		log.Print("Failed data.Spacing check")
-		t.Fail()
-	}
+	assert.Equal(t, data.Animation, "Meteor")
+	assert.Len(t, data.Colors, 2)
+	assert.Len(t, data.Colors[0].Colors, 2)
+	assert.Len(t, data.Colors[1].Colors, 1)
+	assert.Equal(t, data.Colors[0].Colors[0], 0xFF)
+	assert.Equal(t, data.Colors[0].Colors[1], 0xFF00)
+	assert.Equal(t, data.Colors[1].Colors[0], 0xFF0000)
+	assert.Equal(t, data.Center, 50)
+	assert.Equal(t, data.Continuous, NONCONTINUOUS)
+	assert.Equal(t, data.Delay, 10)
+	assert.Equal(t, data.DelayMod, 1.5)
+	assert.Equal(t, data.Direction, BACKWARD)
+	assert.Equal(t, data.Distance, 45)
+	assert.Equal(t, data.Id, "TEST")
+	assert.Equal(t, data.Section, "SECT")
+	assert.Equal(t, data.Spacing, 5)
 }
 
 func TestAnimationData_FromBadJson(t *testing.T) {
@@ -255,50 +177,24 @@ func TestAnimationData_FromBadJson(t *testing.T) {
 
 	data, _ := AnimationDataFromJson(jsonStr)
 
-	if data.Animation != "Color" {
-		log.Print("Failed data.Animation check")
-		t.Fail()
-	} else if len(data.Colors) != 0 {
-		log.Print("Failed data.Colors check")
-		t.Fail()
-	} else if data.Center != -1 {
-		log.Print("Failed data.Center check")
-		t.Fail()
-	} else if data.Continuous != DEFAULT {
-		log.Print("Failed data.Continuous check")
-		t.Fail()
-	} else if data.Delay != -1 {
-		log.Print("Failed data.Delay check")
-		t.Fail()
-	} else if data.DelayMod != 1.0 {
-		log.Print("Failed data.DelayMod check")
-		t.Fail()
-	} else if data.Direction != FORWARD {
-		log.Print("Failed data.Direction check")
-		t.Fail()
-	} else if data.Distance != -1 {
-		log.Print("Failed data.Distance check")
-		t.Fail()
-	} else if data.Id != "" {
-		log.Print("Failed data.Id check")
-		t.Fail()
-	} else if data.Section != "" {
-		log.Print("Failed data.Section check")
-		t.Fail()
-	} else if data.Spacing != -1 {
-		log.Print("Failed data.Spacing check")
-		t.Fail()
-	}
-
+	assert.Equal(t, data.Animation, "Color")
+	assert.Len(t, data.Colors, 0)
+	assert.Equal(t, data.Center, -1)
+	assert.Equal(t, data.Continuous, DEFAULT)
+	assert.Equal(t, data.Delay, -1)
+	assert.Equal(t, data.DelayMod, 1.0)
+	assert.Equal(t, data.Direction, FORWARD)
+	assert.Equal(t, data.Distance, -1)
+	assert.Equal(t, data.Id, "")
+	assert.Equal(t, data.Section, "")
+	assert.Equal(t, data.Spacing, -1)
 }
 
 func TestAnimationData_FromJson_Err(t *testing.T) {
 	jsonStr := `{"animation":5}`
 
 	_, err := AnimationDataFromJson(jsonStr)
-	if err == nil {
-		t.Fail()
-	}
+	assert.NotNil(t, err)
 }
 
 func TestAnimationData_ContinuousFromJson(t *testing.T) {
@@ -306,29 +202,17 @@ func TestAnimationData_ContinuousFromJson(t *testing.T) {
 
 	jsonStr := `{"continuous":null}`
 	data, _ := AnimationDataFromJson(jsonStr)
-	if data.Continuous != DEFAULT {
-		log.Print("Failed null -> DEFAULT")
-		t.Fail()
-	}
+	assert.Equal(t, data.Continuous, DEFAULT)
 
 	jsonStr = `{"continuous":true}`
 	data, _ = AnimationDataFromJson(jsonStr)
-	if data.Continuous != CONTINUOUS {
-		log.Print("Failed true -> CONTINUOUS")
-		t.Fail()
-	}
+	assert.Equal(t, data.Continuous, CONTINUOUS)
 
 	jsonStr = `{"continuous":false}`
 	data, _ = AnimationDataFromJson(jsonStr)
-	if data.Continuous != NONCONTINUOUS {
-		log.Print("Failed false -> NONCONTINUOUS")
-		t.Fail()
-	}
+	assert.Equal(t, data.Continuous, NONCONTINUOUS)
 
 	jsonStr = `{"continuous":-1}`
 	data, _ = AnimationDataFromJson(jsonStr)
-	if data.Continuous != DEFAULT {
-		log.Print("Failed -1 -> DEFAULT")
-		t.Fail()
-	}
+	assert.Equal(t, data.Continuous, DEFAULT)
 }

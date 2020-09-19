@@ -23,8 +23,52 @@
 package animatedledstrip
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
+
+func TestAnimationSender_processData_partialData(t *testing.T) {
+	called := false
+	callback := func(data string) {
+		called = true
+		assert.Equal(t, data, "DATA:{}")
+	}
+
+	sender := AnimationSender{
+		RunningAnimations:   NewRunningAnimationMap(),
+		Sections:            map[string]*section{},
+		SupportedAnimations: map[string]*animationInfo{},
+		onReceiveCallback:   callback,
+	}
+
+	jsonStr := "DAT"
+	sender.processData([]byte(jsonStr))
+
+	jsonStr = "A:{};;;"
+	sender.processData([]byte(jsonStr))
+
+	assert.True(t, called)
+}
+
+func TestAnimationSender_processData_onReceiveCallback(t *testing.T) {
+	called := false
+	callback := func(data string) {
+		called = true
+		assert.Equal(t, data, "DATA:{}")
+	}
+
+	sender := AnimationSender{
+		RunningAnimations:   NewRunningAnimationMap(),
+		Sections:            map[string]*section{},
+		SupportedAnimations: map[string]*animationInfo{},
+		onReceiveCallback:   callback,
+	}
+
+	jsonStr := `DATA:{};;;`
+	sender.processData([]byte(jsonStr))
+
+	assert.True(t, called)
+}
 
 func TestAnimationSender_processData_AnimationData(t *testing.T) {
 	called := false
@@ -44,13 +88,8 @@ func TestAnimationSender_processData_AnimationData(t *testing.T) {
 
 	_, ok := sender.RunningAnimations.Load("test")
 
-	if !ok {
-		t.Fail()
-	}
-
-	if !called {
-		t.Fail()
-	}
+	assert.True(t, ok)
+	assert.True(t, called)
 }
 
 func TestAnimationSender_processData_AnimationInfo(t *testing.T) {
@@ -70,9 +109,7 @@ func TestAnimationSender_processData_AnimationInfo(t *testing.T) {
 	jsonStr := "AINF:{};;;"
 	sender.processData([]byte(jsonStr))
 
-	if !called {
-		t.Fail()
-	}
+	assert.True(t, called)
 }
 
 func TestAnimationSender_processData_EndAnimation(t *testing.T) {
@@ -93,22 +130,15 @@ func TestAnimationSender_processData_EndAnimation(t *testing.T) {
 
 	_, ok := sender.RunningAnimations.Load("test")
 
-	if !ok {
-		t.Fail()
-	}
+	assert.True(t, ok)
 
 	jsonStr = `END :{"id":"test"};;;`
 	sender.processData([]byte(jsonStr))
 
 	_, ok = sender.RunningAnimations.Load("test")
 
-	if ok {
-		t.Fail()
-	}
-
-	if !called {
-		t.Fail()
-	}
+	assert.False(t, ok)
+	assert.True(t, called)
 }
 
 func TestAnimationSender_processData_Message(t *testing.T) {
@@ -127,9 +157,7 @@ func TestAnimationSender_processData_Message(t *testing.T) {
 	jsonStr := "MSG :{};;;"
 	sender.processData([]byte(jsonStr))
 
-	if !called {
-		t.Fail()
-	}
+	assert.True(t, called)
 }
 
 func TestAnimationSender_processData_Section(t *testing.T) {
@@ -148,13 +176,8 @@ func TestAnimationSender_processData_Section(t *testing.T) {
 	jsonStr := "SECT:{};;;"
 	sender.processData([]byte(jsonStr))
 
-	if !called {
-		t.Fail()
-	}
-
-	if len(sender.Sections) != 1 {
-		t.Fail()
-	}
+	assert.True(t, called)
+	assert.Len(t, sender.Sections, 1)
 }
 
 func TestAnimationSender_processData_StripInfo(t *testing.T) {
@@ -173,11 +196,6 @@ func TestAnimationSender_processData_StripInfo(t *testing.T) {
 	jsonStr := "SINF:{};;;"
 	sender.processData([]byte(jsonStr))
 
-	if !called {
-		t.Fail()
-	}
-
-	if sender.StripInfo == nil {
-		t.Fail()
-	}
+	assert.True(t, called)
+	assert.NotNil(t, sender.StripInfo)
 }

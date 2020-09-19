@@ -23,27 +23,20 @@
 package animatedledstrip
 
 import (
-	"log"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestColorContainer_AddColor(t *testing.T) {
 	c := ColorContainer{}
 	c.AddColor(0xFF)
-	if c.Colors[0] != 0xFF {
-		log.Print("Failed c.Colors[0] check")
-		t.Fail()
-	}
+	assert.Equal(t, c.Colors[0], 0xFF)
 
 	c.AddColor(0xFFFF)
-	if c.Colors[0] != 0xFF || c.Colors[1] != 0xFFFF {
-		log.Print("Failed c.Colors[0] and c.Colors[1] check")
-		t.Fail()
-	}
+	assert.Equal(t, c.Colors[0], 0xFF)
+	assert.Equal(t, c.Colors[1], 0xFFFF)
 
 	c.Colors[0] = 0xFFFFFF
-	if c.Colors[0] != 0xFFFFFF || c.Colors[1] != 0xFFFF {
-		log.Print("Failed c.Colors[0] and c.Colors[1] check (direct modification)")
-		t.Fail()
-	}
+	assert.Equal(t, c.Colors[0], 0xFFFFFF)
+	assert.Equal(t, c.Colors[1], 0xFFFF)
 }

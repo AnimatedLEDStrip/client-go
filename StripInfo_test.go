@@ -23,7 +23,7 @@
 package animatedledstrip
 
 import (
-	"log"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -32,22 +32,11 @@ func TestStripInfo_FromGoodJson(t *testing.T) {
 
 	info, _ := StripInfoFromJson(jsonStr)
 
-	if info.NumLEDs != 240 {
-		log.Print("Failed info.NumLEDs check")
-		t.Fail()
-	} else if info.Pin != 12 {
-		log.Print("Failed info.Pin check")
-		t.Fail()
-	} else if info.ImageDebugging != true {
-		log.Print("Failed info.ImageDebugging check")
-		t.Fail()
-	} else if info.RendersBeforeSave != 1000 {
-		log.Print("Failed info.RendersBeforeSave check")
-		t.Fail()
-	} else if info.ThreadCount != 100 {
-		log.Print("Failed info.ThreadCount check")
-		t.Fail()
-	}
+	assert.Equal(t, info.NumLEDs, 240)
+	assert.Equal(t, info.Pin, 12)
+	assert.True(t, info.ImageDebugging)
+	assert.Equal(t, info.RendersBeforeSave, 1000)
+	assert.Equal(t, info.ThreadCount, 100)
 }
 
 func TestStripInfo_FromBadJson(t *testing.T) {
@@ -55,22 +44,11 @@ func TestStripInfo_FromBadJson(t *testing.T) {
 
 	info, _ := StripInfoFromJson(jsonStr)
 
-	if info.NumLEDs != 0 {
-		log.Print("Failed info.NumLEDs check")
-		t.Fail()
-	} else if info.Pin != -1 {
-		log.Print("Failed info.Pin check")
-		t.Fail()
-	} else if info.ImageDebugging != false {
-		log.Print("Failed info.ImageDebugging check")
-		t.Fail()
-	} else if info.RendersBeforeSave != -1 {
-		log.Print("Failed info.RendersBeforeSave check")
-		t.Fail()
-	} else if info.ThreadCount != -1 {
-		log.Print("Failed info.ThreadCount check")
-		t.Fail()
-	}
+	assert.Equal(t, info.NumLEDs, 0)
+	assert.Equal(t, info.Pin, -1)
+	assert.False(t, info.ImageDebugging)
+	assert.Equal(t, info.RendersBeforeSave, -1)
+	assert.Equal(t, info.ThreadCount, -1)
 }
 
 func TestStripInfo_FromJson_Err(t *testing.T) {
@@ -78,7 +56,5 @@ func TestStripInfo_FromJson_Err(t *testing.T) {
 
 	_, err := StripInfoFromJson(jsonStr)
 
-	if err == nil {
-		t.Fail()
-	}
+	assert.NotNil(t, err)
 }

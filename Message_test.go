@@ -22,16 +22,17 @@
 
 package animatedledstrip
 
-import "testing"
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
 
 func TestMessage_FromGoodJson(t *testing.T) {
 	jsonStr := `MSG :{"message":"A message"}`
 
 	msg, _ := MessageFromJson(jsonStr)
 
-	if msg.Message != "A message" {
-		t.Fail()
-	}
+	assert.Equal(t, msg.Message, "A message")
 }
 
 func TestMessage_FromBadJson(t *testing.T) {
@@ -39,9 +40,7 @@ func TestMessage_FromBadJson(t *testing.T) {
 
 	msg, _ := MessageFromJson(jsonStr)
 
-	if msg.Message != "" {
-		t.Fail()
-	}
+	assert.Equal(t, msg.Message, "")
 }
 
 func TestMessage_FromJson_Err(t *testing.T) {
@@ -49,7 +48,5 @@ func TestMessage_FromJson_Err(t *testing.T) {
 
 	_, err := MessageFromJson(jsonStr)
 
-	if err == nil {
-		t.Fail()
-	}
+	assert.NotNil(t, err)
 }

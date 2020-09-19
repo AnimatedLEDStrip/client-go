@@ -22,12 +22,13 @@
 
 package animatedledstrip
 
-import "testing"
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
 
 func TestCommand_Json(t *testing.T) {
 	cmd := Command{Cmd: "A command"}
 	json := cmd.Json()
-	if string(json) != `CMD :{"command":"A command"}` {
-		t.Fail()
-	}
+	assert.Equal(t, string(json), `CMD :{"command":"A command"}`)
 }

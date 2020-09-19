@@ -125,6 +125,10 @@ func (s *AnimationSender) processData(buff []byte) {
 			continue
 		}
 
+		if s.onReceiveCallback != nil {
+			s.onReceiveCallback(token)
+		}
+
 		if strings.HasPrefix(token, "DATA:") {
 			anim, err := AnimationDataFromJson(token)
 			if err != nil {

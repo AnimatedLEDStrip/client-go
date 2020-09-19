@@ -23,46 +23,28 @@
 package animatedledstrip
 
 import (
-	"log"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestDirection_String(t *testing.T) {
 	d := FORWARD
-	if d.String() != `"FORWARD"` {
-		log.Print("Failed FORWARD -> `\"FORWARD\"`")
-		t.Fail()
-	}
+	assert.Equal(t, d.String(), `"FORWARD"`)
 
 	d = BACKWARD
-	if d.String() != `"BACKWARD"` {
-		log.Print("Failed BACKWARD -> `\"BACKWARD\"`")
-		t.Fail()
-	}
+	assert.Equal(t, d.String(), `"BACKWARD"`)
 
 	d = -1
-	if d.String() != `"FORWARD"` {
-		log.Print("Failed -1 -> `\"FORWARD\"`")
-		t.Fail()
-	}
+	assert.Equal(t, d.String(), `"FORWARD"`)
 }
 
 func TestDirection_DirectionFromString(t *testing.T) {
 	d := "FORWARD"
-	if DirectionFromString(d) != FORWARD {
-		log.Print(`Failed "FORWARD" -> FORWARD`)
-		t.Fail()
-	}
+	assert.Equal(t, DirectionFromString(d), FORWARD)
 
 	d = "BACKWARD"
-	if DirectionFromString(d) != BACKWARD {
-		log.Print(`Failed "BACKWARD" -> BACKWARD`)
-		t.Fail()
-	}
+	assert.Equal(t, DirectionFromString(d), BACKWARD)
 
 	d = "NONDIRECTION"
-	if DirectionFromString(d) != FORWARD {
-		log.Print(`Failed "NONDIRECTION" -> FORWARD`)
-		t.Fail()
-	}
+	assert.Equal(t, DirectionFromString(d), FORWARD)
 }

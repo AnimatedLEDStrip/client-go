@@ -23,32 +23,20 @@
 package animatedledstrip
 
 import (
-	"log"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestContinuous_String(t *testing.T) {
 	c := DEFAULT
-	if c.String() != "null" {
-		log.Print(`Failed DEFAULT -> "null"`)
-		t.Fail()
-	}
+	assert.Equal(t, c.String(), "null")
 
 	c = CONTINUOUS
-	if c.String() != "true" {
-		log.Print(`Failed CONTINUOUS -> "true"`)
-		t.Fail()
-	}
+	assert.Equal(t, c.String(), "true")
 
 	c = NONCONTINUOUS
-	if c.String() != "false" {
-		log.Print(`Failed NONCONTINUOUS -> "false"`)
-		t.Fail()
-	}
+	assert.Equal(t, c.String(), "false")
 
 	c = -1
-	if c.String() != "null" {
-		log.Print(`Failed -1 -> "null"`)
-		t.Fail()
-	}
+	assert.Equal(t, c.String(), "null")
 }

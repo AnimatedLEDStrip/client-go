@@ -22,14 +22,15 @@
 
 package animatedledstrip
 
-import "testing"
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
 
 func TestEndAnimation(t *testing.T) {
 	anim := EndAnimation()
 
-	if anim.Id != "" {
-		t.Fail()
-	}
+	assert.Equal(t, anim.Id, "")
 }
 
 func TestEndAnimation_SetId(t *testing.T) {
@@ -37,9 +38,7 @@ func TestEndAnimation_SetId(t *testing.T) {
 
 	anim.SetId("12345")
 
-	if anim.Id != "12345" {
-		t.Fail()
-	}
+	assert.Equal(t, anim.Id, "12345")
 }
 
 func TestEndAnimation_Json(t *testing.T) {
@@ -48,9 +47,7 @@ func TestEndAnimation_Json(t *testing.T) {
 	anim.SetId("54321")
 
 	json := anim.Json()
-	if string(json) != `END :{"id":"54321"}` {
-		t.Fail()
-	}
+	assert.Equal(t, string(json), `END :{"id":"54321"}`)
 }
 
 func TestEndAnimation_FromGoodJson(t *testing.T) {
@@ -58,9 +55,7 @@ func TestEndAnimation_FromGoodJson(t *testing.T) {
 
 	anim, _ := EndAnimationFromJson(jsonStr)
 
-	if anim.Id != "13579" {
-		t.Fail()
-	}
+	assert.Equal(t, anim.Id, "13579")
 }
 
 func TestEndAnimation_FromBadJson(t *testing.T) {
@@ -68,9 +63,7 @@ func TestEndAnimation_FromBadJson(t *testing.T) {
 
 	anim, _ := EndAnimationFromJson(jsonStr)
 
-	if anim.Id != "" {
-		t.Fail()
-	}
+	assert.Equal(t, anim.Id, "")
 }
 
 func TestEndAnimation_FromJson_Err(t *testing.T) {
@@ -78,7 +71,5 @@ func TestEndAnimation_FromJson_Err(t *testing.T) {
 
 	_, err := EndAnimationFromJson(jsonStr)
 
-	if err == nil {
-		t.Fail()
-	}
+	assert.NotNil(t, err)
 }

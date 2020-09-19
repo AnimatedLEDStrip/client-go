@@ -23,46 +23,28 @@
 package animatedledstrip
 
 import (
-	"log"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestParamUsage_String(t *testing.T) {
 	u := USED
-	if u.String() != `"USED"` {
-		log.Print("Failed USED -> `\"USED\"`")
-		t.Fail()
-	}
+	assert.Equal(t, u.String(), `"USED"`)
 
 	u = NOTUSED
-	if u.String() != `"NOTUSED"` {
-		log.Print("Failed NOTUSED -> `\"NOTUSED\"`")
-		t.Fail()
-	}
+	assert.Equal(t, u.String(), `"NOTUSED"`)
 
 	u = -1
-	if u.String() != `"NOTUSED"` {
-		log.Print("Failed -1 -> `\"NOTUSED\"`")
-		t.Fail()
-	}
+	assert.Equal(t, u.String(), `"NOTUSED"`)
 }
 
 func TestParamUsageFromString(t *testing.T) {
 	s := "USED"
-	if ParamUsageFromString(s) != USED {
-		log.Print(`Failed "USED" -> USED`)
-		t.Fail()
-	}
+	assert.Equal(t, ParamUsageFromString(s), USED)
 
 	s = "NOTUSED"
-	if ParamUsageFromString(s) != NOTUSED {
-		log.Print(`Failed "NOTUSED" -> NOTUSED`)
-		t.Fail()
-	}
+	assert.Equal(t, ParamUsageFromString(s), NOTUSED)
 
 	s = "SSS"
-	if ParamUsageFromString(s) != NOTUSED {
-		log.Print(`Failed "SSS" -> NOTUSED`)
-		t.Fail()
-	}
+	assert.Equal(t, ParamUsageFromString(s), NOTUSED)
 }

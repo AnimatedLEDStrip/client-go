@@ -23,122 +23,58 @@
 package animatedledstrip
 
 import (
-	"log"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestAnimationInfo_FromGoodJson(t *testing.T) {
-	jsonStr := `AINF:{"name":"Alternate","abbr":"ALT","description":"A description","signatureFile":"alternate.png","repetitive":true,"minimumColors":2,"unlimitedColors":false,"center":"NOTUSED","delay":"USED","direction":"NOTUSED","distance":"NOTUSED","spacing":"NOTUSED","delayDefault":1000,"distanceDefault":-1,"spacingDefault":3}`
+	jsonStr := `AINF:{"name":"Alternate","abbr":"ALT","description":"A description","signatureFile":"alternate.png","repetitive":true,"minimumColors":2,"unlimitedColors":true,"center":"NOTUSED","delay":"USED","direction":"NOTUSED","distance":"NOTUSED","spacing":"NOTUSED","delayDefault":1000,"distanceDefault":20,"spacingDefault":3}`
 
 	info, _ := AnimationInfoFromJson(jsonStr)
 
-	if info.Name != "Alternate" {
-		log.Print("Failed info.Name check")
-		t.Fail()
-	} else if info.Abbr != "ALT" {
-		log.Print("Failed info.Abbr check")
-		t.Fail()
-	} else if info.Description != "A description" {
-		log.Print("Failed info.Description check")
-		t.Fail()
-	} else if info.SignatureFile != "alternate.png" {
-		log.Print("Failed info.SignatureFile check")
-		t.Fail()
-	} else if info.Repetitive != true {
-		log.Print("Failed info.Repetitive check")
-		t.Fail()
-	} else if info.MinimumColors != 2 {
-		log.Print("Failed info.MinimumColors check")
-		t.Fail()
-	} else if info.UnlimitedColors == true {
-		log.Print("Failed info.UnlimitedColors check")
-		t.Fail()
-	} else if info.Center != NOTUSED {
-		log.Print("Failed info.Center check")
-		t.Fail()
-	} else if info.Delay != USED {
-		log.Print("Failed info.Delay check")
-		t.Fail()
-	} else if info.Direction != NOTUSED {
-		log.Print("Failed info.Direction check")
-		t.Fail()
-	} else if info.Distance != NOTUSED {
-		log.Print("Failed info.Distance check")
-		t.Fail()
-	} else if info.Spacing != NOTUSED {
-		log.Print("Failed info.Spacing check")
-		t.Fail()
-	} else if info.DelayDefault != 1000 {
-		log.Print("Failed info.DelayDefault check")
-		t.Fail()
-	} else if info.DistanceDefault != -1 {
-		log.Print("Failed info.DistanceDefault check")
-		t.Fail()
-	} else if info.SpacingDefault != 3 {
-		log.Print("Failed info.SpacingDefault check")
-		t.Fail()
-	}
+	assert.Equal(t, info.Name, "Alternate")
+	assert.Equal(t, info.Abbr, "ALT")
+	assert.Equal(t, info.Description, "A description")
+	assert.Equal(t, info.SignatureFile, "alternate.png")
+	assert.True(t, info.Repetitive)
+	assert.Equal(t, info.MinimumColors, 2)
+	assert.True(t, info.UnlimitedColors)
+	assert.Equal(t, info.Center, NOTUSED)
+	assert.Equal(t, info.Delay, USED)
+	assert.Equal(t, info.Direction, NOTUSED)
+	assert.Equal(t, info.Distance, NOTUSED)
+	assert.Equal(t, info.Spacing, NOTUSED)
+	assert.Equal(t, info.DelayDefault, 1000)
+	assert.Equal(t, info.DistanceDefault, 20)
+	assert.Equal(t, info.SpacingDefault, 3)
 }
 
-//func TestAnimationInfo_FromBadJson(t *testing.T) {
-//	jsonStr := `AINF:{}`
-//
-//	info, _ := AnimationInfoFromJson(jsonStr)
-//
-//	if info.Name != "" {
-//		log.Print("Failed info.Name check")
-//		t.Fail()
-//	} else if info.Abbr != "" {
-//		log.Print("Failed info.Abbr check")
-//		t.Fail()
-//	} else if info.Description != "" {
-//		log.Print("Failed info.Description check")
-//		t.Fail()
-//	} else if info.SignatureFile != "" {
-//		log.Print("Failed info.SignatureFile check")
-//		t.Fail()
-//	} else if info.Repetitive != false {
-//		log.Print("Failed info.Repetitive check")
-//		t.Fail()
-//	} else if info.MinimumColors != -1 {
-//		log.Print("Failed info.MinimumColors check")
-//		t.Fail()
-//	} else if info.UnlimitedColors == false {
-//		log.Print("Failed info.UnlimitedColors check")
-//		t.Fail()
-//	} else if info.Center != NOTUSED {
-//		log.Print("Failed info.Center check")
-//		t.Fail()
-//	} else if info.Delay != NOTUSED {
-//		log.Print("Failed info.Delay check")
-//		t.Fail()
-//	} else if info.Direction != NOTUSED {
-//		log.Print("Failed info.Direction check")
-//		t.Fail()
-//	} else if info.Distance != NOTUSED {
-//		log.Print("Failed info.Distance check")
-//		t.Fail()
-//	} else if info.Spacing != NOTUSED {
-//		log.Print("Failed info.Spacing check")
-//		t.Fail()
-//	} else if info.DelayDefault != -1 {
-//		log.Print("Failed info.DelayDefault check")
-//		t.Fail()
-//	} else if info.DistanceDefault != -1 {
-//		log.Print("Failed info.DistanceDefault check")
-//		t.Fail()
-//	} else if info.SpacingDefault != -1 {
-//		log.Print("Failed info.SpacingDefault check")
-//		t.Fail()
-//	}
-//}
+func TestAnimationInfo_FromBadJson(t *testing.T) {
+	t.Skip()
+	jsonStr := `AINF:{}`
+
+	info, _ := AnimationInfoFromJson(jsonStr)
+
+	assert.Equal(t, info.Name, "")
+	assert.Equal(t, info.Abbr, "")
+	assert.Equal(t, info.Description, "")
+	assert.Equal(t, info.SignatureFile, "")
+	assert.False(t, info.Repetitive)
+	assert.Equal(t, info.MinimumColors, -1)
+	assert.False(t, info.UnlimitedColors)
+	assert.Equal(t, info.Center, NOTUSED)
+	assert.Equal(t, info.Delay, NOTUSED)
+	assert.Equal(t, info.Direction, NOTUSED)
+	assert.Equal(t, info.Distance, NOTUSED)
+	assert.Equal(t, info.Spacing, NOTUSED)
+	assert.Equal(t, info.DelayDefault, -1)
+	assert.Equal(t, info.DistanceDefault, -1)
+	assert.Equal(t, info.SpacingDefault, -1)
+}
 
 func TestAnimationInfo_FromJson_Err(t *testing.T) {
 	jsonStr := `AINF:{"name":3}`
 
 	_, err := AnimationInfoFromJson(jsonStr)
-
-	if err == nil {
-		t.Fail()
-	}
+	assert.NotNil(t, err)
 }
