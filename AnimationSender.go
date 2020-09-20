@@ -23,6 +23,7 @@
 package animatedledstrip
 
 import (
+	"go.uber.org/atomic"
 	"log"
 	"net"
 	"strconv"
@@ -34,8 +35,8 @@ type AnimationSender struct {
 	Port       int
 	connection *net.Conn
 
-	Started   bool
-	Connected bool
+	started   atomic.Bool
+	connected atomic.Bool
 
 	RunningAnimations   *RunningAnimationMap
 	Sections            map[string]*section
@@ -57,8 +58,16 @@ type AnimationSender struct {
 	partialData string
 }
 
+func (s *AnimationSender) IsStarted() bool {
+	return s.started.Load()
+}
+
+func (s *AnimationSender) IsConnected() bool {
+	return s.connected.Load()
+}
+
 func (s *AnimationSender) Start() {
-	if s.Started {
+	if s.IsStarted() {
 		return
 	}
 
@@ -67,7 +76,7 @@ func (s *AnimationSender) Start() {
 	s.SupportedAnimations = map[string]*animationInfo{}
 	s.StripInfo = nil
 
-	s.Started = true
+	s.started.Store(true)
 
 	conn, err := net.Dial("tcp", s.Address+":"+strconv.Itoa(s.Port))
 	if err != nil {
@@ -75,12 +84,12 @@ func (s *AnimationSender) Start() {
 			go s.onUnableToConnectCallback(s.Address, s.Port)
 		}
 
-		s.Started = false
-		s.Connected = false
+		s.started.Store(false)
+		s.connected.Store(false)
 	} else {
 		s.connection = &conn
 
-		s.Connected = true
+		s.connected.Store(true)
 		if s.onConnectCallback != nil {
 			go s.onConnectCallback(s.Address, s.Port)
 		}
@@ -90,21 +99,21 @@ func (s *AnimationSender) Start() {
 }
 
 func (s *AnimationSender) End() {
-	if !s.Connected {
+	if !s.IsConnected() {
 		return
 	}
-	s.Started = false
-	s.Connected = false
+	s.started.Store(false)
+	s.connected.Store(false)
 	_ = (*s.connection).Close()
 }
 
 func (s *AnimationSender) receiverLoop() {
-	for s.Connected {
+	for s.IsConnected() {
 		buff := make([]byte, 16384)
 		length, err := (*s.connection).Read(buff)
 		if err != nil {
-			s.Started = false
-			s.Connected = false
+			s.started.Store(false)
+			s.connected.Store(false)
 			_ = (*s.connection).Close()
 			if s.onDisconnectCallback != nil {
 				go s.onDisconnectCallback(s.Address, s.Port)
