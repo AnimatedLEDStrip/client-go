@@ -71,14 +71,19 @@ func (s *AnimationSender) Start() {
 
 	conn, err := net.Dial("tcp", s.Address+":"+strconv.Itoa(s.Port))
 	if err != nil {
-		s.onUnableToConnectCallback(s.Address, s.Port)
+		if s.onUnableToConnectCallback != nil {
+			go s.onUnableToConnectCallback(s.Address, s.Port)
+		}
+
 		s.Started = false
 		s.Connected = false
 	} else {
 		s.connection = &conn
 
 		s.Connected = true
-		s.onConnectCallback(s.Address, s.Port)
+		if s.onConnectCallback != nil {
+			go s.onConnectCallback(s.Address, s.Port)
+		}
 
 		go s.receiverLoop()
 	}
@@ -101,7 +106,9 @@ func (s *AnimationSender) receiverLoop() {
 			s.Started = false
 			s.Connected = false
 			_ = (*s.connection).Close()
-			s.onDisconnectCallback(s.Address, s.Port)
+			if s.onDisconnectCallback != nil {
+				go s.onDisconnectCallback(s.Address, s.Port)
+			}
 			return
 		}
 

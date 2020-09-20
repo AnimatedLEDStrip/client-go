@@ -24,8 +24,92 @@ package animatedledstrip
 
 import (
 	"github.com/stretchr/testify/assert"
+	"net"
 	"testing"
 )
+
+func createConnection(t *testing.T, readyCh chan bool) {
+	ln, err := net.Listen("tcp", ":2501")
+	assert.Nil(t, err)
+	readyCh <- true
+	conn, err2 := ln.Accept()
+	assert.Nil(t, err2)
+	err3 := conn.Close()
+	assert.Nil(t, err3)
+}
+
+func TestAnimationSender_Start(t *testing.T) {
+	calledCh1 := make(chan bool)
+	callback := func(ip string, port int) {
+		calledCh1 <- true
+		assert.Equal(t, ip, "0.0.0.0")
+		assert.Equal(t, port, 2501)
+	}
+	calledCh2 := make(chan bool)
+	callback2 := func(ip string, port int) {
+		calledCh2 <- true
+		assert.Equal(t, ip, "0.0.0.0")
+		assert.Equal(t, port, 2501)
+	}
+
+	readyCh := make(chan bool)
+
+	go createConnection(t, readyCh)
+
+	ready := <-readyCh
+
+	assert.True(t, ready)
+
+	sender := AnimationSender{
+		Address: "0.0.0.0",
+		Port:    2501,
+	}
+
+	sender.SetOnConnectCallback(callback)
+	sender.SetOnDisconnectCallback(callback2)
+
+	sender.Start()
+
+	called1 := <-calledCh1
+	called2 := <-calledCh2
+	assert.True(t, called1)
+	assert.True(t, called2)
+}
+
+func TestAnimationSender_Start_UnableToConnect(t *testing.T) {
+	calledCh := make(chan bool)
+	callback := func(ip string, port int) {
+		calledCh <- true
+		assert.Equal(t, ip, "0.0.0.0")
+		assert.Equal(t, port, 2502)
+	}
+
+	sender := AnimationSender{
+		Address: "0.0.0.0",
+		Port:    2502,
+	}
+
+	sender.SetOnUnableToConnectCallback(callback)
+
+	sender.Start()
+
+	called := <-calledCh
+	assert.True(t, called)
+}
+
+func TestAnimationSender_Start_Already_Started(t *testing.T) {
+	sender := AnimationSender{
+		Address: "0.0.0.0",
+		Port:    5,
+		Started: true,
+	}
+
+	sender.Start()
+
+	assert.Nil(t, sender.RunningAnimations)
+	assert.Nil(t, sender.Sections)
+	assert.Nil(t, sender.SupportedAnimations)
+}
 
 func TestAnimationSender_processData_partialData(t *testing.T) {
 	called := false
