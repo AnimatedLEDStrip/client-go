@@ -50,7 +50,6 @@ func TestAnimationInfo_FromGoodJson(t *testing.T) {
 }
 
 func TestAnimationInfo_FromBadJson(t *testing.T) {
-	t.Skip()
 	jsonStr := `AINF:{}`
 
 	info, _ := AnimationInfoFromJson(jsonStr)

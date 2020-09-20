@@ -252,15 +252,12 @@ func TestAnimationSender_SetOnNewAnimationDataCallback(t *testing.T) {
 }
 
 func TestAnimationSender_processData_AnimationInfo(t *testing.T) {
-	t.Skip()
 	called := false
 	callback := func(info *animationInfo) {
 		called = true
 	}
 
 	sender := AnimationSender{
-		RunningAnimations:          NewRunningAnimationMap(),
-		Sections:                   map[string]*section{},
 		SupportedAnimations:        map[string]*animationInfo{},
 		onNewAnimationInfoCallback: callback,
 	}
@@ -271,16 +268,37 @@ func TestAnimationSender_processData_AnimationInfo(t *testing.T) {
 	assert.True(t, called)
 }
 
-func TestAnimationSender_SetOnNewAnimationInfoCallback(t *testing.T) {
-	t.Skip()
+func TestAnimationSender_processData_AnimationInfo_err(t *testing.T) {
 	called := false
 	callback := func(info *animationInfo) {
 		called = true
 	}
 
 	sender := AnimationSender{
-		RunningAnimations:   NewRunningAnimationMap(),
-		Sections:            map[string]*section{},
+		SupportedAnimations:        map[string]*animationInfo{},
+		onNewAnimationInfoCallback: callback,
+	}
+
+	var buf bytes.Buffer
+	log.SetOutput(&buf)
+	defer func() {
+		log.SetOutput(os.Stderr)
+	}()
+
+	jsonStr := "AINF:{;;;"
+	sender.processData([]byte(jsonStr))
+
+	assert.False(t, called)
+	assert.Equal(t, buf.String()[20:], "unexpected end of JSON input\n")
+}
+
+func TestAnimationSender_SetOnNewAnimationInfoCallback(t *testing.T) {
+	called := false
+	callback := func(info *animationInfo) {
+		called = true
+	}
+
+	sender := AnimationSender{
 		SupportedAnimations: map[string]*animationInfo{},
 	}
 

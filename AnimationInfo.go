@@ -96,11 +96,11 @@ func AnimationInfoFromJson(data string) (*animationInfo, error) {
 	animInfo.Center = ParamUsageFromString(center)
 	delay, _ := usg["delay"].(string)
 	animInfo.Delay = ParamUsageFromString(delay)
-	direction := usg["direction"].(string)
+	direction, _ := usg["direction"].(string)
 	animInfo.Direction = ParamUsageFromString(direction)
-	distance := usg["distance"].(string)
+	distance, _ := usg["distance"].(string)
 	animInfo.Distance = ParamUsageFromString(distance)
-	spacing := usg["spacing"].(string)
+	spacing, _ := usg["spacing"].(string)
 	animInfo.Spacing = ParamUsageFromString(spacing)
 
 	return &animInfo, nil
