@@ -70,6 +70,26 @@ func TestAnimationSender_processData_onReceiveCallback(t *testing.T) {
 	assert.True(t, called)
 }
 
+func TestAnimationSender_SetOnReceiveCallback(t *testing.T) {
+	called := false
+	callback := func(data string) {
+		called = true
+	}
+
+	sender := AnimationSender{
+		RunningAnimations:   NewRunningAnimationMap(),
+		Sections:            map[string]*section{},
+		SupportedAnimations: map[string]*animationInfo{},
+	}
+
+	sender.SetOnReceiveCallback(callback)
+
+	jsonStr := `DATA:{};;;`
+	sender.processData([]byte(jsonStr))
+
+	assert.True(t, called)
+}
+
 func TestAnimationSender_processData_AnimationData(t *testing.T) {
 	called := false
 	callback := func(data *animationData) {
@@ -92,6 +112,26 @@ func TestAnimationSender_processData_AnimationData(t *testing.T) {
 	assert.True(t, called)
 }
 
+func TestAnimationSender_SetOnNewAnimationDataCallback(t *testing.T) {
+	called := false
+	callback := func(data *animationData) {
+		called = true
+	}
+
+	sender := AnimationSender{
+		RunningAnimations:   NewRunningAnimationMap(),
+		Sections:            map[string]*section{},
+		SupportedAnimations: map[string]*animationInfo{},
+	}
+
+	sender.SetOnNewAnimationDataCallback(callback)
+
+	jsonStr := `DATA:{"id":"test"};;;`
+	sender.processData([]byte(jsonStr))
+
+	assert.True(t, called)
+}
+
 func TestAnimationSender_processData_AnimationInfo(t *testing.T) {
 	t.Skip()
 	called := false
@@ -105,6 +145,27 @@ func TestAnimationSender_processData_AnimationInfo(t *testing.T) {
 		SupportedAnimations:        map[string]*animationInfo{},
 		onNewAnimationInfoCallback: callback,
 	}
+
+	jsonStr := "AINF:{};;;"
+	sender.processData([]byte(jsonStr))
+
+	assert.True(t, called)
+}
+
+func TestAnimationSender_SetOnNewAnimationInfoCallback(t *testing.T) {
+	t.Skip()
+	called := false
+	callback := func(info *animationInfo) {
+		called = true
+	}
+
+	sender := AnimationSender{
+		RunningAnimations:   NewRunningAnimationMap(),
+		Sections:            map[string]*section{},
+		SupportedAnimations: map[string]*animationInfo{},
+	}
+
+	sender.SetOnNewAnimationInfoCallback(callback)
 
 	jsonStr := "AINF:{};;;"
 	sender.processData([]byte(jsonStr))
@@ -141,6 +202,26 @@ func TestAnimationSender_processData_EndAnimation(t *testing.T) {
 	assert.True(t, called)
 }
 
+func TestAnimationSender_SetOnNewEndAnimationCallback(t *testing.T) {
+	called := false
+	callback := func(end *endAnimation) {
+		called = true
+	}
+
+	sender := AnimationSender{
+		RunningAnimations:   NewRunningAnimationMap(),
+		Sections:            map[string]*section{},
+		SupportedAnimations: map[string]*animationInfo{},
+	}
+
+	sender.SetOnNewEndAnimationCallback(callback)
+
+	jsonStr := `END :{"id":"test"};;;`
+	sender.processData([]byte(jsonStr))
+
+	assert.True(t, called)
+}
+
 func TestAnimationSender_processData_Message(t *testing.T) {
 	called := false
 	callback := func(msg *message) {
@@ -153,6 +234,26 @@ func TestAnimationSender_processData_Message(t *testing.T) {
 		SupportedAnimations:  map[string]*animationInfo{},
 		onNewMessageCallback: callback,
 	}
+
+	jsonStr := "MSG :{};;;"
+	sender.processData([]byte(jsonStr))
+
+	assert.True(t, called)
+}
+
+func TestAnimationSender_SetOnNewMessageCallback(t *testing.T) {
+	called := false
+	callback := func(msg *message) {
+		called = true
+	}
+
+	sender := AnimationSender{
+		RunningAnimations:   NewRunningAnimationMap(),
+		Sections:            map[string]*section{},
+		SupportedAnimations: map[string]*animationInfo{},
+	}
+
+	sender.SetOnNewMessageCallback(callback)
 
 	jsonStr := "MSG :{};;;"
 	sender.processData([]byte(jsonStr))
@@ -180,6 +281,26 @@ func TestAnimationSender_processData_Section(t *testing.T) {
 	assert.Len(t, sender.Sections, 1)
 }
 
+func TestAnimationSender_SetOnNewSectionCallback(t *testing.T) {
+	called := false
+	callback := func(sect *section) {
+		called = true
+	}
+
+	sender := AnimationSender{
+		RunningAnimations:   NewRunningAnimationMap(),
+		Sections:            map[string]*section{},
+		SupportedAnimations: map[string]*animationInfo{},
+	}
+
+	sender.SetOnNewSectionCallback(callback)
+
+	jsonStr := "SECT:{};;;"
+	sender.processData([]byte(jsonStr))
+
+	assert.True(t, called)
+}
+
 func TestAnimationSender_processData_StripInfo(t *testing.T) {
 	called := false
 	callback := func(info *stripInfo) {
@@ -198,4 +319,24 @@ func TestAnimationSender_processData_StripInfo(t *testing.T) {
 
 	assert.True(t, called)
 	assert.NotNil(t, sender.StripInfo)
+}
+
+func TestAnimationSender_SetOnNewStripInfoCallback(t *testing.T) {
+	called := false
+	callback := func(info *stripInfo) {
+		called = true
+	}
+
+	sender := AnimationSender{
+		RunningAnimations:   NewRunningAnimationMap(),
+		Sections:            map[string]*section{},
+		SupportedAnimations: map[string]*animationInfo{},
+	}
+
+	sender.SetOnNewStripInfoCallback(callback)
+
+	jsonStr := "SINF:{};;;"
+	sender.processData([]byte(jsonStr))
+
+	assert.True(t, called)
 }

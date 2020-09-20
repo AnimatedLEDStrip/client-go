@@ -232,6 +232,10 @@ func (s *AnimationSender) SetOnUnableToConnectCallback(action func(string, int))
 	s.onUnableToConnectCallback = action
 }
 
+func (s *AnimationSender) SetOnReceiveCallback(action func(string)) {
+	s.onReceiveCallback = action
+}
+
 func (s *AnimationSender) SetOnNewAnimationDataCallback(action func(*animationData)) {
 	s.onNewAnimationDataCallback = action
 }
