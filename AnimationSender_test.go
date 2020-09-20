@@ -38,8 +38,6 @@ func TestAnimationSender(t *testing.T) {
 	calledCh1 := make(chan bool)
 	callback1 := func(ip string, port int) {
 		calledCh1 <- true
-		assert.Equal(t, ip, "0.0.0.0")
-		assert.Equal(t, port, 1101)
 	}
 	calledCh2 := make(chan bool)
 	callback2 := func(data *animationData) {
@@ -62,8 +60,6 @@ func TestAnimationSender(t *testing.T) {
 	calledCh3 := make(chan bool)
 	callback3 := func(ip string, port int) {
 		calledCh3 <- true
-		assert.Equal(t, ip, "0.0.0.0")
-		assert.Equal(t, 1101, port)
 	}
 
 	ln, err := net.Listen("tcp", ":1101")
@@ -94,8 +90,6 @@ func TestAnimationSender(t *testing.T) {
 	sender.Start()
 	called1 := <-calledCh1
 	assert.True(t, called1)
-	assert.True(t, sender.IsStarted())
-	assert.True(t, sender.IsConnected())
 
 	_ = <-readyCh
 
@@ -106,12 +100,11 @@ func TestAnimationSender(t *testing.T) {
 
 	d, _ := time.ParseDuration("5ms")
 	time.Sleep(d)
+
 	sender.End()
 
 	called3 := <-calledCh3
 	assert.True(t, called3)
-	assert.False(t, sender.IsStarted())
-	assert.False(t, sender.IsConnected())
 
 	err = ln.Close()
 	if err != nil {
@@ -124,14 +117,14 @@ func TestAnimationSender_Start_End(t *testing.T) {
 	calledCh1 := make(chan bool)
 	callback1 := func(ip string, port int) {
 		calledCh1 <- true
-		assert.Equal(t, ip, "0.0.0.0")
-		assert.Equal(t, port, 1102)
+		assert.Equal(t, "0.0.0.0", ip)
+		assert.Equal(t, 1102, port)
 	}
 	calledCh2 := make(chan bool)
 	callback2 := func(ip string, port int) {
 		calledCh2 <- true
-		assert.Equal(t, ip, "0.0.0.0")
-		assert.Equal(t, port, 1102)
+		assert.Equal(t, "0.0.0.0", ip)
+		assert.Equal(t, 1102, port)
 	}
 
 	ln, err := net.Listen("tcp", ":1102")
@@ -180,8 +173,8 @@ func TestAnimationSender_Start_UnableToConnect(t *testing.T) {
 	calledCh := make(chan bool)
 	callback := func(ip string, port int) {
 		calledCh <- true
-		assert.Equal(t, ip, "0.0.0.0")
-		assert.Equal(t, port, 1103)
+		assert.Equal(t, "0.0.0.0", ip)
+		assert.Equal(t, 1103, port)
 	}
 
 	sender := AnimationSender{
@@ -246,7 +239,7 @@ func TestAnimationSender_processData_partialData(t *testing.T) {
 	called := false
 	callback := func(data string) {
 		called = true
-		assert.Equal(t, data, "DATA:{}")
+		assert.Equal(t, "DATA:{}", data)
 	}
 
 	sender := AnimationSender{
@@ -264,7 +257,7 @@ func TestAnimationSender_processData_onReceiveCallback(t *testing.T) {
 	called := false
 	callback := func(data string) {
 		called = true
-		assert.Equal(t, data, "DATA:{}")
+		assert.Equal(t, "DATA:{}", data)
 	}
 
 	sender := AnimationSender{
@@ -332,7 +325,7 @@ func TestAnimationSender_processData_AnimationData_err(t *testing.T) {
 	sender.processData([]byte(`DATA:{"id":"test";;;`))
 
 	assert.False(t, called)
-	assert.Equal(t, buf.String()[20:], "unexpected end of JSON input\n")
+	assert.Equal(t, "unexpected end of JSON input\n", buf.String()[20:])
 }
 
 func TestAnimationSender_SetOnNewAnimationDataCallback(t *testing.T) {
@@ -387,7 +380,7 @@ func TestAnimationSender_processData_AnimationInfo_err(t *testing.T) {
 	sender.processData([]byte("AINF:{;;;"))
 
 	assert.False(t, called)
-	assert.Equal(t, buf.String()[20:], "unexpected end of JSON input\n")
+	assert.Equal(t, "unexpected end of JSON input\n", buf.String()[20:])
 }
 
 func TestAnimationSender_SetOnNewAnimationInfoCallback(t *testing.T) {
@@ -418,7 +411,7 @@ func TestAnimationSender_processData_Command_err(t *testing.T) {
 
 	sender.processData([]byte("CMD :{};;;"))
 
-	assert.Equal(t, buf.String()[20:], "WARNING: Receiving Command is not supported by client\n")
+	assert.Equal(t, "WARNING: Receiving Command is not supported by client\n", buf.String()[20:])
 }
 
 func TestAnimationSender_processData_EndAnimation(t *testing.T) {
@@ -464,7 +457,7 @@ func TestAnimationSender_processData_EndAnimation_err(t *testing.T) {
 	sender.processData([]byte(`END :{"id":"test";;;`))
 
 	assert.False(t, called)
-	assert.Equal(t, buf.String()[20:], "unexpected end of JSON input\n")
+	assert.Equal(t, "unexpected end of JSON input\n", buf.String()[20:])
 }
 
 func TestAnimationSender_SetOnNewEndAnimationCallback(t *testing.T) {
@@ -518,7 +511,7 @@ func TestAnimationSender_processData_Message_err(t *testing.T) {
 	sender.processData([]byte("MSG :{;;;"))
 
 	assert.False(t, called)
-	assert.Equal(t, buf.String()[20:], "unexpected end of JSON input\n")
+	assert.Equal(t, "unexpected end of JSON input\n", buf.String()[20:])
 }
 
 func TestAnimationSender_SetOnNewMessageCallback(t *testing.T) {
@@ -573,7 +566,7 @@ func TestAnimationSender_processData_Section_err(t *testing.T) {
 
 	assert.False(t, called)
 	assert.Len(t, sender.Sections, 0)
-	assert.Equal(t, buf.String()[20:], "unexpected end of JSON input\n")
+	assert.Equal(t, "unexpected end of JSON input\n", buf.String()[20:])
 }
 
 func TestAnimationSender_SetOnNewSectionCallback(t *testing.T) {
@@ -628,7 +621,7 @@ func TestAnimationSender_processData_StripInfo_err(t *testing.T) {
 
 	assert.False(t, called)
 	assert.Nil(t, sender.StripInfo)
-	assert.Equal(t, buf.String()[20:], "unexpected end of JSON input\n")
+	assert.Equal(t, "unexpected end of JSON input\n", buf.String()[20:])
 }
 
 func TestAnimationSender_SetOnNewStripInfoCallback(t *testing.T) {
@@ -656,5 +649,337 @@ func TestAnimationSender_processData_type_err(t *testing.T) {
 
 	sender.processData([]byte("TADA:{};;;"))
 
-	assert.Equal(t, buf.String()[20:], "WARNING: Unrecognized data type: TADA\n")
+	assert.Equal(t, "WARNING: Unrecognized data type: TADA\n", buf.String()[20:])
+}
+
+func TestAnimationSender_SendAnimationData(t *testing.T) {
+	calledCh1 := make(chan bool)
+	callback1 := func(ip string, port int) {
+		calledCh1 <- true
+	}
+	calledCh2 := make(chan bool)
+	callback2 := func(ip string, port int) {
+		calledCh2 <- true
+	}
+
+	ln, err := net.Listen("tcp", ":1106")
+	if err != nil {
+		t.Log(err.Error())
+		t.Fail()
+		return
+	}
+
+	var conn net.Conn
+
+	readyCh := make(chan bool)
+
+	go func() {
+		conn, _ = ln.Accept()
+		readyCh <- true
+	}()
+
+	sender := AnimationSender{
+		Address: "0.0.0.0",
+		Port:    1106,
+	}
+
+	sender.SetOnConnectCallback(callback1)
+	sender.SetOnDisconnectCallback(callback2)
+
+	sender.Start()
+	called1 := <-calledCh1
+	assert.True(t, called1)
+
+	_ = <-readyCh
+
+	buff := make([]byte, 16384)
+	var length int
+
+	go func() {
+		length, _ = conn.Read(buff)
+		assert.Greater(t, length, 0)
+		readyCh <- true
+	}()
+
+	data := AnimationData()
+	data.SetAnimation("Meteor")
+	data.SetCenter(50)
+	data.SetContinuous(NONCONTINUOUS)
+	data.SetDelay(10)
+	data.SetDelayMod(1.5)
+	data.SetDirection(BACKWARD)
+	data.SetDistance(45)
+	data.SetID("TEST")
+	data.SetSection("SECT")
+	data.SetSpacing(5)
+
+	cc := ColorContainer{}
+	cc.AddColor(0xFF).AddColor(0xFF00)
+	cc2 := ColorContainer{}
+	cc2.AddColor(0xFF0000)
+	data.AddColor(&cc)
+	data.AddColor(&cc2)
+
+	sender.SendAnimationData(data)
+
+	_ = <-readyCh
+
+	assert.Equal(t,
+		`DATA:{"animation":"Meteor","center":50,"colors":[{"colors":[255,65280]},{"colors":[16711680]}],"continuous":false,"delay":10,"delayMod":1.5,"direction":"BACKWARD","distance":45,"id":"TEST","section":"SECT","spacing":5};;;`,
+		string(buff)[:length])
+
+	d, _ := time.ParseDuration("5ms")
+	time.Sleep(d)
+
+	sender.End()
+
+	called2 := <-calledCh2
+	assert.True(t, called2)
+
+	err = ln.Close()
+	if err != nil {
+		t.Log(err.Error())
+		t.Fail()
+	}
+}
+
+func TestAnimationSender_SendCommand(t *testing.T) {
+	calledCh1 := make(chan bool)
+	callback1 := func(ip string, port int) {
+		calledCh1 <- true
+	}
+	calledCh2 := make(chan bool)
+	callback2 := func(ip string, port int) {
+		calledCh2 <- true
+	}
+
+	ln, err := net.Listen("tcp", ":1107")
+	if err != nil {
+		t.Log(err.Error())
+		t.Fail()
+		return
+	}
+
+	var conn net.Conn
+
+	readyCh := make(chan bool)
+
+	go func() {
+		conn, _ = ln.Accept()
+		readyCh <- true
+	}()
+
+	sender := AnimationSender{
+		Address: "0.0.0.0",
+		Port:    1107,
+	}
+
+	sender.SetOnConnectCallback(callback1)
+	sender.SetOnDisconnectCallback(callback2)
+
+	sender.Start()
+	called1 := <-calledCh1
+	assert.True(t, called1)
+
+	_ = <-readyCh
+
+	buff := make([]byte, 16384)
+	var length int
+
+	go func() {
+		length, _ = conn.Read(buff)
+		assert.Greater(t, length, 0)
+		readyCh <- true
+	}()
+
+	cmd := Command{Cmd: "A command"}
+
+	sender.SendCommand(&cmd)
+
+	_ = <-readyCh
+
+	assert.Equal(t, `CMD :{"command":"A command"};;;`, string(buff)[:length])
+
+	d, _ := time.ParseDuration("5ms")
+	time.Sleep(d)
+
+	sender.End()
+
+	called2 := <-calledCh2
+	assert.True(t, called2)
+
+	err = ln.Close()
+	if err != nil {
+		t.Log(err.Error())
+		t.Fail()
+	}
+}
+
+func TestAnimationSender_SendEndAnimation(t *testing.T) {
+	calledCh1 := make(chan bool)
+	callback1 := func(ip string, port int) {
+		calledCh1 <- true
+	}
+	calledCh2 := make(chan bool)
+	callback2 := func(ip string, port int) {
+		calledCh2 <- true
+	}
+
+	ln, err := net.Listen("tcp", ":1108")
+	if err != nil {
+		t.Log(err.Error())
+		t.Fail()
+		return
+	}
+
+	var conn net.Conn
+
+	readyCh := make(chan bool)
+
+	go func() {
+		conn, _ = ln.Accept()
+		readyCh <- true
+	}()
+
+	sender := AnimationSender{
+		Address: "0.0.0.0",
+		Port:    1108,
+	}
+
+	sender.SetOnConnectCallback(callback1)
+	sender.SetOnDisconnectCallback(callback2)
+
+	sender.Start()
+	called1 := <-calledCh1
+	assert.True(t, called1)
+
+	_ = <-readyCh
+
+	buff := make([]byte, 16384)
+	var length int
+
+	go func() {
+		length, _ = conn.Read(buff)
+		assert.Greater(t, length, 0)
+		readyCh <- true
+	}()
+
+	anim := EndAnimation()
+	anim.SetId("54321")
+
+	sender.SendEndAnimation(anim)
+
+	_ = <-readyCh
+
+	assert.Equal(t, `END :{"id":"54321"};;;`, string(buff)[:length])
+
+	d, _ := time.ParseDuration("5ms")
+	time.Sleep(d)
+
+	sender.End()
+
+	called2 := <-calledCh2
+	assert.True(t, called2)
+
+	err = ln.Close()
+	if err != nil {
+		t.Log(err.Error())
+		t.Fail()
+	}
+}
+
+func TestAnimationSender_SendSection(t *testing.T) {
+	calledCh1 := make(chan bool)
+	callback1 := func(ip string, port int) {
+		calledCh1 <- true
+	}
+	calledCh2 := make(chan bool)
+	callback2 := func(ip string, port int) {
+		calledCh2 <- true
+	}
+
+	ln, err := net.Listen("tcp", ":1109")
+	if err != nil {
+		t.Log(err.Error())
+		t.Fail()
+		return
+	}
+
+	var conn net.Conn
+
+	readyCh := make(chan bool)
+
+	go func() {
+		conn, _ = ln.Accept()
+		readyCh <- true
+	}()
+
+	sender := AnimationSender{
+		Address: "0.0.0.0",
+		Port:    1109,
+	}
+
+	sender.SetOnConnectCallback(callback1)
+	sender.SetOnDisconnectCallback(callback2)
+
+	sender.Start()
+	called1 := <-calledCh1
+	assert.True(t, called1)
+
+	_ = <-readyCh
+
+	buff := make([]byte, 16384)
+	var length int
+
+	go func() {
+		length, _ = conn.Read(buff)
+		assert.Greater(t, length, 0)
+		readyCh <- true
+	}()
+
+	sect := Section()
+	sect.SetName("Section")
+	sect.SetStartPixel(30)
+	sect.SetEndPixel(40)
+
+	sender.SendSection(sect)
+
+	_ = <-readyCh
+
+	assert.Equal(t, `SECT:{"name":"Section","startPixel":30,"endPixel":40};;;`, string(buff)[:length])
+
+	d, _ := time.ParseDuration("5ms")
+	time.Sleep(d)
+
+	sender.End()
+
+	called2 := <-calledCh2
+	assert.True(t, called2)
+
+	err = ln.Close()
+	if err != nil {
+		t.Log(err.Error())
+		t.Fail()
+	}
+}
+
+func TestAnimationSender_send_not_connected(t *testing.T) {
+	sender := AnimationSender{
+		Address: "0.0.0.0",
+		Port:    1110,
+	}
+
+	sect := Section()
+	sect.SetName("Section")
+	sect.SetStartPixel(30)
+	sect.SetEndPixel(40)
+
+	var buf bytes.Buffer
+	log.SetOutput(&buf)
+	defer func() {
+		log.SetOutput(os.Stderr)
+	}()
+
+	sender.SendSection(sect)
+	assert.Equal(t, "WARNING: Not connected\n", buf.String()[20:])
 }

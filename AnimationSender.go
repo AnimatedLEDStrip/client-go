@@ -214,11 +214,12 @@ func (s *AnimationSender) processData(buff []byte) {
 }
 
 func (s *AnimationSender) send(jsonBytes []byte) {
-	jsonBytes = append(jsonBytes, []byte(";;;")...)
-	_, err := (*s.connection).Write(jsonBytes)
-	if err != nil {
-		log.Print("ERROR: error sending")
+	if !s.IsConnected() {
+		log.Print("WARNING: Not connected")
+		return
 	}
+	jsonBytes = append(jsonBytes, []byte(";;;")...)
+	_, _ = (*s.connection).Write(jsonBytes)
 }
 
 func (s *AnimationSender) SendAnimationData(data *animationData) {
