@@ -28,6 +28,7 @@ import (
 	"net"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 type AnimationSender struct {
@@ -38,7 +39,7 @@ type AnimationSender struct {
 	started   atomic.Bool
 	connected atomic.Bool
 
-	RunningAnimations   *RunningAnimationMap
+	RunningAnimations   *sync.Map
 	Sections            map[string]*section
 	SupportedAnimations map[string]*animationInfo
 	StripInfo           *stripInfo
@@ -71,7 +72,7 @@ func (s *AnimationSender) Start() {
 		return
 	}
 
-	s.RunningAnimations = NewRunningAnimationMap()
+	s.RunningAnimations = new(sync.Map)
 	s.Sections = map[string]*section{}
 	s.SupportedAnimations = map[string]*animationInfo{}
 	s.StripInfo = nil

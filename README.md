@@ -73,8 +73,3 @@ To retrieve an animation, use
 sender.RunningAnimations.Load(ID)
 ```
 where `ID` is the string ID of the animation.
-
-To get a list of all animation IDs, use
-```go
-ids := sender.RunningAnimations.Keys()
-```

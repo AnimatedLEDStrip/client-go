@@ -29,6 +29,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"sync"
 	"testing"
 	"time"
 )
@@ -229,7 +230,7 @@ func TestAnimationSender_receiveData(t *testing.T) {
 	}
 
 	sender := AnimationSender{
-		RunningAnimations:          NewRunningAnimationMap(),
+		RunningAnimations:          new(sync.Map),
 		onNewAnimationDataCallback: callback,
 	}
 
@@ -249,7 +250,7 @@ func TestAnimationSender_processData_partialData(t *testing.T) {
 	}
 
 	sender := AnimationSender{
-		RunningAnimations: NewRunningAnimationMap(),
+		RunningAnimations: new(sync.Map),
 		onReceiveCallback: callback,
 	}
 
@@ -267,7 +268,7 @@ func TestAnimationSender_processData_onReceiveCallback(t *testing.T) {
 	}
 
 	sender := AnimationSender{
-		RunningAnimations: NewRunningAnimationMap(),
+		RunningAnimations: new(sync.Map),
 		onReceiveCallback: callback,
 	}
 
@@ -283,7 +284,7 @@ func TestAnimationSender_SetOnReceiveCallback(t *testing.T) {
 	}
 
 	sender := AnimationSender{
-		RunningAnimations: NewRunningAnimationMap(),
+		RunningAnimations: new(sync.Map),
 	}
 	sender.SetOnReceiveCallback(callback)
 
@@ -299,7 +300,7 @@ func TestAnimationSender_processData_AnimationData(t *testing.T) {
 	}
 
 	sender := AnimationSender{
-		RunningAnimations:          NewRunningAnimationMap(),
+		RunningAnimations:          new(sync.Map),
 		onNewAnimationDataCallback: callback,
 	}
 
@@ -318,7 +319,7 @@ func TestAnimationSender_processData_AnimationData_err(t *testing.T) {
 	}
 
 	sender := AnimationSender{
-		RunningAnimations:          NewRunningAnimationMap(),
+		RunningAnimations:          new(sync.Map),
 		onNewAnimationDataCallback: callback,
 	}
 
@@ -341,7 +342,7 @@ func TestAnimationSender_SetOnNewAnimationDataCallback(t *testing.T) {
 	}
 
 	sender := AnimationSender{
-		RunningAnimations: NewRunningAnimationMap(),
+		RunningAnimations: new(sync.Map),
 	}
 	sender.SetOnNewAnimationDataCallback(callback)
 
@@ -427,7 +428,7 @@ func TestAnimationSender_processData_EndAnimation(t *testing.T) {
 	}
 
 	sender := AnimationSender{
-		RunningAnimations:         NewRunningAnimationMap(),
+		RunningAnimations:         new(sync.Map),
 		onNewEndAnimationCallback: callback,
 	}
 
@@ -473,7 +474,7 @@ func TestAnimationSender_SetOnNewEndAnimationCallback(t *testing.T) {
 	}
 
 	sender := AnimationSender{
-		RunningAnimations: NewRunningAnimationMap(),
+		RunningAnimations: new(sync.Map),
 	}
 
 	sender.SetOnNewEndAnimationCallback(callback)
