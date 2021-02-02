@@ -22,11 +22,30 @@
 
 package animatedledstrip
 
-type ColorContainer struct {
-	Colors []int `json:"colors"`
+type colorContainer struct {
+	ContainerType string `json:"type"`
+	Colors        []int  `json:"colors"`
 }
 
-func (c *ColorContainer) AddColor(color int) *ColorContainer {
+func ColorContainer(colors []int) *colorContainer {
+	return &colorContainer{ContainerType: "ColorContainer", Colors: colors}
+}
+
+func (c *colorContainer) AddColor(color int) *colorContainer {
 	c.Colors = append(c.Colors, color)
 	return c
+}
+
+type preparedColorContainer struct {
+	ContainerType  string `json:"type"`
+	Colors         []int  `json:"colors"`
+	OriginalColors []int  `json:"originalColors"`
+}
+
+func PreparedColorContainer(colors []int, originalColors []int) *preparedColorContainer {
+	return &preparedColorContainer{
+		ContainerType:  "PreparedColorContainer",
+		Colors:         colors,
+		OriginalColors: originalColors,
+	}
 }

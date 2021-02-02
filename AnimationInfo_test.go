@@ -22,58 +22,53 @@
 
 package animatedledstrip
 
-import (
-	"github.com/stretchr/testify/assert"
-	"testing"
-)
-
-func TestAnimationInfo_FromGoodJson(t *testing.T) {
-	jsonStr := `AINF:{"name":"Alternate","abbr":"ALT","description":"A description","signatureFile":"alternate.png","repetitive":true,"minimumColors":2,"unlimitedColors":true,"center":"NOTUSED","delay":"USED","direction":"NOTUSED","distance":"NOTUSED","spacing":"NOTUSED","delayDefault":1000,"distanceDefault":20,"spacingDefault":3}`
-
-	info, _ := AnimationInfoFromJson(jsonStr)
-
-	assert.Equal(t, info.Name, "Alternate")
-	assert.Equal(t, info.Abbr, "ALT")
-	assert.Equal(t, info.Description, "A description")
-	assert.Equal(t, info.SignatureFile, "alternate.png")
-	assert.True(t, info.Repetitive)
-	assert.Equal(t, info.MinimumColors, 2)
-	assert.True(t, info.UnlimitedColors)
-	assert.Equal(t, info.Center, NOTUSED)
-	assert.Equal(t, info.Delay, USED)
-	assert.Equal(t, info.Direction, NOTUSED)
-	assert.Equal(t, info.Distance, NOTUSED)
-	assert.Equal(t, info.Spacing, NOTUSED)
-	assert.Equal(t, info.DelayDefault, 1000)
-	assert.Equal(t, info.DistanceDefault, 20)
-	assert.Equal(t, info.SpacingDefault, 3)
-}
-
-func TestAnimationInfo_FromBadJson(t *testing.T) {
-	jsonStr := `AINF:{}`
-
-	info, _ := AnimationInfoFromJson(jsonStr)
-
-	assert.Equal(t, info.Name, "")
-	assert.Equal(t, info.Abbr, "")
-	assert.Equal(t, info.Description, "")
-	assert.Equal(t, info.SignatureFile, "")
-	assert.False(t, info.Repetitive)
-	assert.Equal(t, info.MinimumColors, -1)
-	assert.False(t, info.UnlimitedColors)
-	assert.Equal(t, info.Center, NOTUSED)
-	assert.Equal(t, info.Delay, NOTUSED)
-	assert.Equal(t, info.Direction, NOTUSED)
-	assert.Equal(t, info.Distance, NOTUSED)
-	assert.Equal(t, info.Spacing, NOTUSED)
-	assert.Equal(t, info.DelayDefault, -1)
-	assert.Equal(t, info.DistanceDefault, -1)
-	assert.Equal(t, info.SpacingDefault, -1)
-}
-
-func TestAnimationInfo_FromJson_Err(t *testing.T) {
-	jsonStr := `AINF:{"name":3}`
-
-	_, err := AnimationInfoFromJson(jsonStr)
-	assert.NotNil(t, err)
-}
+//func TestAnimationInfo_FromGoodJson(t *testing.T) {
+//	jsonStr := `AINF:{"name":"Alternate","abbr":"ALT","description":"A description","signatureFile":"alternate.png","repetitive":true,"minimumColors":2,"unlimitedColors":true,"center":"NOTUSED","delay":"USED","direction":"NOTUSED","distance":"NOTUSED","spacing":"NOTUSED","delayDefault":1000,"distanceDefault":20,"spacingDefault":3}`
+//
+//	info, _ := AnimationInfoFromJson(jsonStr)
+//
+//	assert.Equal(t, "Alternate", info.Name)
+//	assert.Equal(t, "ALT", info.Abbr)
+//	assert.Equal(t, "A description", info.Description)
+//	assert.Equal(t, "alternate.png", info.SignatureFile)
+//	assert.True(t, info.Repetitive)
+//	assert.Equal(t, 2, info.MinimumColors)
+//	assert.True(t, info.UnlimitedColors)
+//	assert.Equal(t, NOTUSED, info.Center)
+//	assert.Equal(t, USED, info.Delay)
+//	assert.Equal(t, NOTUSED, info.Direction)
+//	assert.Equal(t, NOTUSED, info.Distance)
+//	assert.Equal(t, NOTUSED, info.Spacing)
+//	assert.Equal(t, 1000, info.DelayDefault)
+//	assert.Equal(t, 20, info.DistanceDefault)
+//	assert.Equal(t, 3, info.SpacingDefault)
+//}
+//
+//func TestAnimationInfo_FromBadJson(t *testing.T) {
+//	jsonStr := `AINF:{}`
+//
+//	info, _ := AnimationInfoFromJson(jsonStr)
+//
+//	assert.Equal(t, "", info.Name)
+//	assert.Equal(t, "", info.Abbr)
+//	assert.Equal(t, "", info.Description)
+//	assert.Equal(t, "", info.SignatureFile)
+//	assert.False(t, info.Repetitive)
+//	assert.Equal(t, -1, info.MinimumColors)
+//	assert.False(t, info.UnlimitedColors)
+//	assert.Equal(t, NOTUSED, info.Center)
+//	assert.Equal(t, NOTUSED, info.Delay)
+//	assert.Equal(t, NOTUSED, info.Direction)
+//	assert.Equal(t, NOTUSED, info.Distance)
+//	assert.Equal(t, NOTUSED, info.Spacing)
+//	assert.Equal(t, -1, info.DelayDefault)
+//	assert.Equal(t, -1, info.DistanceDefault)
+//	assert.Equal(t, -1, info.SpacingDefault)
+//}
+//
+//func TestAnimationInfo_FromJson_Err(t *testing.T) {
+//	jsonStr := `AINF:{"name":3}`
+//
+//	_, err := AnimationInfoFromJson(jsonStr)
+//	assert.NotNil(t, err)
+//}

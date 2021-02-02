@@ -30,7 +30,7 @@ import (
 type animationData struct {
 	Animation  string            `json:"animation"`
 	Center     int               `json:"center"`
-	Colors     []*ColorContainer `json:"colors"`
+	Colors     []*colorContainer `json:"colors"`
 	Continuous Continuous        `json:"continuous"`
 	Delay      int               `json:"delay"`
 	DelayMod   float64           `json:"delayMod"`
@@ -68,7 +68,7 @@ func AnimationDataFromJson(data string) (*animationData, error) {
 	var dataFilter struct {
 		Animation string            `json:"animation,omitempty"`
 		Center    int               `json:"center,omitempty"`
-		Colors    []*ColorContainer `json:"colors,omitempty"`
+		Colors    []*colorContainer `json:"colors,omitempty"`
 		Delay     int               `json:"delay,omitempty"`
 		DelayMod  float64           `json:"delayMod,omitempty"`
 		Distance  int               `json:"distance,omitempty"`
@@ -112,7 +112,7 @@ func (d *animationData) SetAnimation(anim string) *animationData {
 	return d
 }
 
-func (d *animationData) AddColor(color *ColorContainer) *animationData {
+func (d *animationData) AddColor(color *colorContainer) *animationData {
 	d.Colors = append(d.Colors, color)
 	return d
 }

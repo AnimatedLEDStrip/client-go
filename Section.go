@@ -22,70 +22,16 @@
 
 package animatedledstrip
 
-import (
-	"encoding/json"
-	"strings"
-)
-
 type section struct {
-	Name          string `json:"name"`
-	StartPixel    int    `json:"startPixel"`
-	EndPixel      int    `json:"endPixel"`
-	PhysicalStart int    `json:"physicalStart"`
-	NumLEDs       int    `json:"numLEDs"`
+	Name              string `json:"name"`
+	Pixels            []int  `json:"pixels"`
+	ParentSectionName string `json:"parentSectionName"`
 }
 
-func (s *section) MarshalJSON() ([]byte, error) {
-	var tmp struct {
-		Name       string `json:"name"`
-		StartPixel int    `json:"startPixel"`
-		EndPixel   int    `json:"endPixel"`
-	}
-	tmp.Name = s.Name
-	tmp.StartPixel = s.StartPixel
-	tmp.EndPixel = s.EndPixel
-	return json.Marshal(&tmp)
-}
-
-func Section() *section {
+func Section(name string, pixels []int, parentSectionName string) *section {
 	return &section{
-		Name:          "",
-		StartPixel:    -1,
-		EndPixel:      -1,
-		PhysicalStart: -1,
-		NumLEDs:       0,
+		Name:              name,
+		Pixels:            pixels,
+		ParentSectionName: parentSectionName,
 	}
-}
-
-func (s *section) Json() []byte {
-	str, _ := json.Marshal(s)
-	return append([]byte("SECT:"), str...)
-}
-
-func SectionFromJson(data string) (*section, error) {
-	dataStr := strings.TrimPrefix(data, "SECT:")
-	sect := Section()
-	err := json.Unmarshal([]byte(dataStr), sect)
-	if err != nil {
-		return nil, err
-	} else {
-		return sect, nil
-	}
-}
-
-func (s *section) SetName(name string) *section {
-	s.Name = name
-	return s
-}
-
-func (s *section) SetStartPixel(pixel int) *section {
-	s.StartPixel = pixel
-	s.NumLEDs = s.EndPixel - s.StartPixel
-	return s
-}
-
-func (s *section) SetEndPixel(pixel int) *section {
-	s.EndPixel = pixel
-	s.NumLEDs = s.EndPixel - s.StartPixel
-	return s
 }

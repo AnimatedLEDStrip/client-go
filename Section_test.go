@@ -22,80 +22,75 @@
 
 package animatedledstrip
 
-import (
-	"github.com/stretchr/testify/assert"
-	"testing"
-)
-
-func TestSection(t *testing.T) {
-	sect := Section()
-
-	assert.Equal(t, sect.Name, "")
-	assert.Equal(t, sect.StartPixel, -1)
-	assert.Equal(t, sect.EndPixel, -1)
-	assert.Equal(t, sect.PhysicalStart, -1)
-	assert.Equal(t, sect.NumLEDs, 0)
-}
-
-func TestSection_SetName(t *testing.T) {
-	sect := Section()
-	sect.SetName("Test")
-
-	assert.Equal(t, sect.Name, "Test")
-}
-
-func TestSection_SetStartPixel(t *testing.T) {
-	sect := Section()
-	sect.SetStartPixel(5)
-
-	assert.Equal(t, sect.StartPixel, 5)
-}
-
-func TestSection_SetEndPixel(t *testing.T) {
-	sect := Section()
-	sect.SetEndPixel(20)
-
-	assert.Equal(t, sect.EndPixel, 20)
-}
-
-func TestSection_Json(t *testing.T) {
-	sect := Section()
-	sect.SetName("Section")
-	sect.SetStartPixel(30)
-	sect.SetEndPixel(40)
-
-	json := sect.Json()
-	assert.Equal(t, string(json), `SECT:{"name":"Section","startPixel":30,"endPixel":40}`)
-}
-
-func TestSection_FromGoodJson(t *testing.T) {
-	jsonStr := `SECT:{"physicalStart":0,"numLEDs":240,"name":"section","startPixel":0,"endPixel":239}`
-
-	sect, _ := SectionFromJson(jsonStr)
-
-	assert.Equal(t, sect.Name, "section")
-	assert.Equal(t, sect.StartPixel, 0)
-	assert.Equal(t, sect.EndPixel, 239)
-	assert.Equal(t, sect.PhysicalStart, 0)
-	assert.Equal(t, sect.NumLEDs, 240)
-}
-
-func TestSection_FromBadJson(t *testing.T) {
-	jsonStr := "SECT:{}"
-
-	sect, _ := SectionFromJson(jsonStr)
-
-	assert.Equal(t, sect.Name, "")
-	assert.Equal(t, sect.StartPixel, -1)
-	assert.Equal(t, sect.EndPixel, -1)
-	assert.Equal(t, sect.PhysicalStart, -1)
-	assert.Equal(t, sect.NumLEDs, 0)
-}
-
-func TestSection_FromJsonErr(t *testing.T) {
-	jsonStr := `SECT:{"name":false}`
-
-	_, err := SectionFromJson(jsonStr)
-
-	assert.NotNil(t, err)
-}
+//func TestSection(t *testing.T) {
+//	sect := Section()
+//
+//	assert.Equal(t, sect.Name, "")
+//	assert.Equal(t, sect.StartPixel, -1)
+//	assert.Equal(t, sect.EndPixel, -1)
+//	assert.Equal(t, sect.PhysicalStart, -1)
+//	assert.Equal(t, sect.NumLEDs, 0)
+//}
+//
+//func TestSection_SetName(t *testing.T) {
+//	sect := Section()
+//	sect.SetName("Test")
+//
+//	assert.Equal(t, sect.Name, "Test")
+//}
+//
+//func TestSection_SetStartPixel(t *testing.T) {
+//	sect := Section()
+//	sect.SetStartPixel(5)
+//
+//	assert.Equal(t, sect.StartPixel, 5)
+//}
+//
+//func TestSection_SetEndPixel(t *testing.T) {
+//	sect := Section()
+//	sect.SetEndPixel(20)
+//
+//	assert.Equal(t, sect.EndPixel, 20)
+//}
+//
+//func TestSection_Json(t *testing.T) {
+//	sect := Section()
+//	sect.SetName("Section")
+//	sect.SetStartPixel(30)
+//	sect.SetEndPixel(40)
+//
+//	json := sect.Json()
+//	assert.Equal(t, string(json), `SECT:{"name":"Section","startPixel":30,"endPixel":40}`)
+//}
+//
+//func TestSection_FromGoodJson(t *testing.T) {
+//	jsonStr := `SECT:{"physicalStart":0,"numLEDs":240,"name":"section","startPixel":0,"endPixel":239}`
+//
+//	sect, _ := SectionFromJson(jsonStr)
+//
+//	assert.Equal(t, sect.Name, "section")
+//	assert.Equal(t, sect.StartPixel, 0)
+//	assert.Equal(t, sect.EndPixel, 239)
+//	assert.Equal(t, sect.PhysicalStart, 0)
+//	assert.Equal(t, sect.NumLEDs, 240)
+//}
+//
+//func TestSection_FromBadJson(t *testing.T) {
+//	jsonStr := "SECT:{}"
+//
+//	sect, _ := SectionFromJson(jsonStr)
+//
+//	assert.Equal(t, sect.Name, "")
+//	assert.Equal(t, sect.StartPixel, -1)
+//	assert.Equal(t, sect.EndPixel, -1)
+//	assert.Equal(t, sect.PhysicalStart, -1)
+//	assert.Equal(t, sect.NumLEDs, 0)
+//}
+//
+//func TestSection_FromJsonErr(t *testing.T) {
+//	jsonStr := `SECT:{"name":false}`
+//
+//	_, err := SectionFromJson(jsonStr)
+//
+//	assert.NotNil(t, err)
+//}

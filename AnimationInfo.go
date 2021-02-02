@@ -22,86 +22,26 @@
 
 package animatedledstrip
 
-import (
-	"encoding/json"
-	"strings"
-)
-
-type animationInfo struct {
-	Name            string     `json:"name"`
-	Abbr            string     `json:"abbr"`
-	Description     string     `json:"description"`
-	SignatureFile   string     `json:"signatureFile"`
-	Repetitive      bool       `json:"repetitive"`
-	MinimumColors   int        `json:"minimumColors"`
-	UnlimitedColors bool       `json:"unlimitedColors"`
-	Center          ParamUsage `json:"center"`
-	Delay           ParamUsage `json:"delay"`
-	Direction       ParamUsage `json:"direction"`
-	Distance        ParamUsage `json:"distance"`
-	Spacing         ParamUsage `json:"spacing"`
-	DelayDefault    int        `json:"delayDefault"`
-	DistanceDefault int        `json:"distanceDefault"`
-	SpacingDefault  int        `json:"spacingDefault"`
+// TODO: Figure out better way to handle default
+type animationParameter struct {
+	Name        string       `json:"name"`
+	Description string       `json:"description"`
+	Default     *interface{} `json:"default"`
 }
 
-func AnimationInfoFromJson(data string) (*animationInfo, error) {
-	dataStr := strings.TrimPrefix(data, "AINF:")
-	animInfo := animationInfo{
-		Name:            "",
-		Abbr:            "",
-		Description:     "",
-		SignatureFile:   "",
-		Repetitive:      false,
-		MinimumColors:   -1,
-		UnlimitedColors: false,
-		Center:          NOTUSED,
-		Delay:           NOTUSED,
-		Direction:       NOTUSED,
-		Distance:        NOTUSED,
-		Spacing:         NOTUSED,
-		DelayDefault:    -1,
-		DistanceDefault: -1,
-		SpacingDefault:  -1,
-	}
-
-	var infoFilter struct {
-		Name            string `json:"name,omitempty"`
-		Abbr            string `json:"abbr,omitempty"`
-		Description     string `json:"description,omitempty"`
-		SignatureFile   string `json:"signatureFile,omitempty"`
-		Repetitive      bool   `json:"repetitive,omitempty"`
-		MinimumColors   int    `json:"minimumColors,omitempty"`
-		UnlimitedColors bool   `json:"unlimitedColors,omitempty"`
-		DelayDefault    int    `json:"delayDefault,omitempty"`
-		DistanceDefault int    `json:"distanceDefault,omitempty"`
-		SpacingDefault  int    `json:"spacingDefault,omitempty"`
-	}
-	err := json.Unmarshal([]byte(dataStr), &infoFilter)
-	if err != nil {
-		return nil, err
-	}
-	jsonBytes, _ := json.Marshal(&infoFilter)
-	_ = json.Unmarshal(jsonBytes, &animInfo)
-
-	var getUsages interface{}
-	_ = json.Unmarshal([]byte(dataStr), &getUsages)
-	usg := getUsages.(map[string]interface{})
-
-	// No need to specify a default for
-	// center, delay, direction, distance or spacing
-	// because ParamUsageFromString returns NOTUSED
-	// for an empty string
-	center, _ := usg["center"].(string)
-	animInfo.Center = ParamUsageFromString(center)
-	delay, _ := usg["delay"].(string)
-	animInfo.Delay = ParamUsageFromString(delay)
-	direction, _ := usg["direction"].(string)
-	animInfo.Direction = ParamUsageFromString(direction)
-	distance, _ := usg["distance"].(string)
-	animInfo.Distance = ParamUsageFromString(distance)
-	spacing, _ := usg["spacing"].(string)
-	animInfo.Spacing = ParamUsageFromString(spacing)
-
-	return &animInfo, nil
+type animationInfo struct {
+	Name            string                `json:"name"`
+	Abbr            string                `json:"abbr"`
+	Description     string                `json:"description"`
+	RunCountDefault int                   `json:"runCountDefault"`
+	MinimumColors   int                   `json:"minimumColors"`
+	UnlimitedColors bool                  `json:"unlimitedColors"`
+	Dimensionality  []string              `json:"dimensionality"`
+	IntParams       []*animationParameter `json:"intParams"`
+	DoubleParams    []*animationParameter `json:"doubleParams"`
+	StringParams    []*animationParameter `json:"stringParams"`
+	LocationParams  []*animationParameter `json:"locationParams"`
+	DistanceParams  []*animationParameter `json:"distanceParams"`
+	RotationParams  []*animationParameter `json:"rotationParams"`
+	EquationParams  []*animationParameter `json:"equationParams"`
 }

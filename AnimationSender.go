@@ -157,15 +157,15 @@ func (s *AnimationSender) processData(buff []byte) {
 				s.RunningAnimations.Store(anim.Id, anim)
 			}
 		} else if strings.HasPrefix(token, "AINF:") {
-			info, err := AnimationInfoFromJson(token)
-			if err != nil {
-				log.Print(err.Error())
-			} else {
-				s.SupportedAnimations[info.Name] = info
-				if s.onNewAnimationInfoCallback != nil {
-					s.onNewAnimationInfoCallback(info)
-				}
-			}
+			//info, err := AnimationInfoFromJson(token)
+			//if err != nil {
+			//	log.Print(err.Error())
+			//} else {
+			//	s.SupportedAnimations[info.Name] = info
+			//	if s.onNewAnimationInfoCallback != nil {
+			//		s.onNewAnimationInfoCallback(info)
+			//	}
+			//}
 		} else if strings.HasPrefix(token, "CMD :") {
 			log.Print("WARNING: Receiving Command is not supported by client")
 		} else if strings.HasPrefix(token, "END :") {
@@ -188,15 +188,15 @@ func (s *AnimationSender) processData(buff []byte) {
 				}
 			}
 		} else if strings.HasPrefix(token, "SECT:") {
-			sect, err := SectionFromJson(token)
-			if err != nil {
-				log.Print(err.Error())
-			} else {
-				if s.onNewSectionCallback != nil {
-					s.onNewSectionCallback(sect)
-				}
-				s.Sections[sect.Name] = sect
-			}
+			//sect, err := SectionFromJson(token)
+			//if err != nil {
+			//	log.Print(err.Error())
+			//} else {
+			//	if s.onNewSectionCallback != nil {
+			//		s.onNewSectionCallback(sect)
+			//	}
+			//	s.Sections[sect.Name] = sect
+			//}
 		} else if strings.HasPrefix(token, "SINF") {
 			info, err := StripInfoFromJson(token)
 			if err != nil {
@@ -234,9 +234,9 @@ func (s *AnimationSender) SendEndAnimation(endAnim *endAnimation) {
 	s.send(endAnim.Json())
 }
 
-func (s *AnimationSender) SendSection(sect *section) {
-	s.send(sect.Json())
-}
+//func (s *AnimationSender) SendSection(sect *section) {
+//	s.send(sect.Json())
+//}
 
 func (s *AnimationSender) SetOnConnectCallback(action func(string, int)) {
 	s.onConnectCallback = action
