@@ -234,6 +234,10 @@ func (c *aLSHttpClient) GetSection(name string) (*section, error) {
 	}
 }
 
+func (c *aLSHttpClient) GetFullStripSection() (*section, error) {
+	return c.GetSection("fullStrip")
+}
+
 func (c *aLSHttpClient) CreateNewSection(newSection *section) (*section, error) {
 	body, err := json.Marshal(newSection)
 	if err != nil {

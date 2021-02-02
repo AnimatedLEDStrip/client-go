@@ -4,7 +4,7 @@
 [![godoc](https://godoc.org/github.com/AnimatedLEDStrip/client-go?status.svg)](http://godoc.org/github.com/AnimatedLEDStrip/client-go)
 [![codecov](https://codecov.io/gh/AnimatedLEDStrip/client-go/branch/master/graph/badge.svg)](https://codecov.io/gh/AnimatedLEDStrip/client-go)
 
-This library allows a Go client to connect to an AnimatedLEDStrip server, allowing the client to send animations to the server and receive currently running animations from the server, among other information.
+This library allows a Go client to communicate with an AnimatedLEDStrip server.
 
 ## Using the Library in a Project
 The library can be downloaded with:
@@ -13,63 +13,22 @@ The library can be downloaded with:
 go get github.com/AnimatedLEDStrip/client-go
 ```
 
-## Creating an `AnimationSender`
-An `AnimationSender` struct contains an `Ip` field (type `string`) and a `Port` field (type `int`).
+## Creating an `ALSHttpClient`
+To create a HTTP client, run `ALSHttpClient(ipAddress)`.
 
 ```go
 import als "github.com/AnimatedLEDStrip/client-go"
 
-sender := als.AnimationSender{}
-sender.Ip = "10.0.0.254"
-sender.Port = 5
-
-// or
-
-sender := als.AnimationSender{
-	Ip:   "10.0.0.254",
-	Port: 5,
-}
+client := als.ALSHttpClient("10.0.0.254")
 ```
 
-## Starting the `AnimationSender`
-An `AnimationSender` is started by calling the `Start()` method on the instance.
+## Communicating with the Server
 
-```go
-sender.Start()
-```
+This library follows the conventions laid out for [AnimatedLEDStrip client libraries](https://animatedledstrip.github.io/client-libraries), with the following modifications:
 
-## Stopping the `AnimationSender`
-To stop the `AnimationSender`, call its `End()` method.
-
-```go
-sender.End()
-```
-
-## Sending Data
-An animation can be sent to the server by creating an instance of the `AnimationData` struct, then calling `SendAnimation` with the struct as the argument.
-
-```go
-cc := als.ColorContainer{}
-cc.AddColor(0xFF)
-cc.AddColor(0xFF00)
-
-data := als.AnimationData()        // Note that this is a function call 
-                                   // that returns an animationData struct pointer
-data.AddColor(&cc)
-
-sender.SendAnimation(data)
-```
-
-#### `AnimationData` type notes
-The Go library uses the following values for `continuous` and `direction`:
-- `continuous`: `DEFAULT`, `CONTINUOUS`, `NONCONTINUOUS`
-- `direction`: `FORWARD`, `BACKWARD`
-
-## Receiving Data
-Received animations are saved to `RunningAnimations`, which is a `RunningAnimationMap` (which is a thread-safe map).
-
-To retrieve an animation, use
-```go
-sender.RunningAnimations.Load(ID)
-```
-where `ID` is the string ID of the animation.
+- Function names and struct variables are capitalized because of how Go denotes exported identifiers
+- `DegreesRotation` and `RadiansRotation` are constructors for the `rotation` struct, which uses the `RotationType` variable to track which type it is
+- `AbsoluteDistance` and `PercentDistance` are constructors for the `distance` struct, which uses the `DistanceType` variable to track which type it is
+- `ColorContainer` and `PreparedColorContainer` have a `ContainerType` variable that works similarly to above, though the structs are different
+- The `colors` parameter for an `AnimationToRunParams` struct only accepts `ColorContainer`s
+- The `default` parameter for an `AnimationParameter` hasn't been figured out yet
